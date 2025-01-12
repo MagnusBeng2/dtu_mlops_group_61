@@ -9,7 +9,7 @@ In this project, we aim to develop an efficient and specialized English-to-Germa
 
 The project will use the T5-small model, a pre-trained text-to-text transformer from the Hugging Face library. While the base model is capable of handling multilingual translation tasks, this project will fine-tune the model specifically for English-to-German translations. Fine-tuning allows the model to adapt to nuances in language structure and improve performance for this specific task.
 
-The Transformer framework will play a pivotal role, providing robust tools for working with transformer-based models in Python. Additionally, PyTorch Lightning will be used to simplify the training process and manage model training efficiently.
+Additionally, the Transformer framework will play a pivotal role, providing robust tools for working with transformer-based models in Python. Additionally, PyTorch Lightning will be used to simplify the training process and manage model training efficiently.
 
 **Data to be Used**
 
