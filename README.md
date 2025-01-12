@@ -16,10 +16,12 @@ The Transformer framework will play a pivotal role, providing robust tools for w
 The primary dataset will be the WMT19 English-German translation dataset, a widely recognized dataset for machine translation tasks. This dataset includes aligned text pairs that ensure consistency and quality for training and evaluation. The dataset will be preprocessed to remove noise, tokenize text, and convert it into a format compatible with transformer models.
 
 **Pipeline Tools and Workflow**
+
 A structured ML pipeline will be developed using Cookiecutter for project organization, Docker for containerization, and DVC (Data Version Control) for managing data and experiments. Weights & Biases will be integrated to monitor training progress, analyze metrics, and facilitate hyperparameter tuning.
 
 **Expected Outcome**
-By fine-tuning the T5-small model and employing a robust pipeline, this project aims to deliver a high-performing English-to-German translation model. The final system will be optimized for deployment and scalability, ensuring it is ready for real-world applications.
+
+By fine-tuning the T5-small model and employing a robust pipeline, the aim of this project is to deliver a high-performing English-to-German translation model. The final system will be optimized for deployment and scalability, ensuring it is applicable for real-world applications.
 
 
 Project Organization
