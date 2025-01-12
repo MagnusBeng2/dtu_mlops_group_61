@@ -1,17 +1,26 @@
-dtu_mlops_exam_project
+English-to-German Translation System
 ==============================
 
-Exam project for course 02476 MLOps at DTU
+**Overall Goal of the Project**
 
-In this project we wish to obtain a translater from English to German. We finetune the <a target="_blank" href="https://huggingface.co/t5-small">t5-small model</a> using the <a target="_blank" href="https://huggingface.co/datasets/wmt19"> WMT19 dataset</a>. This dataset contains translation pairs in multiple languages and is part of the conference <a target="_blank" href="https://machinetranslate.org/wmt">(WMT)</a> on machine learning translation.
-    
-T5 is a text-to-text model and the model from Huggingface is already able to translate multiple languages as well as perform other tasks within NLP. However, we seek to finetune it for translation of english to german. In order to train the model we utilize the <a target="_blank" href="https://github.com/huggingface/transformers">Transformer framework</a>. This framework provides a large variery of tools for working with transformers in Python, where we will utilize relevant functions for finetuning as well as pytorch lightening. 
-    
-In this project we highly focus on obtaining a good model pipeline. In order to obtain this goal we will utilize many different tools such as cookiecutter for document structure, docker to containerising our code as dvc for handeling data.
+In this project, we aim to develop an efficient and specialized English-to-German translation system by fine-tuning pre-existing natural language processing (NLP) models. The objective is to achieve high translation accuracy and optimize the model pipeline for scalability and usability. Accurate translation systems are essential for multilingual communication and are widely used in various applications, such as education, e-commerce, and international business.
 
-Furthermore Weights and Biases will provide useful insight in the performance of the model.
+**Framework to be Used**
 
-    
+The project will use the T5-small model, a pre-trained text-to-text transformer from the Hugging Face library. While the base model is capable of handling multilingual translation tasks, this project will fine-tune the model specifically for English-to-German translations. Fine-tuning allows the model to adapt to nuances in language structure and improve performance for this specific task.
+
+The Transformer framework will play a pivotal role, providing robust tools for working with transformer-based models in Python. Additionally, PyTorch Lightning will be used to simplify the training process and manage model training efficiently.
+
+**Data to be Used**
+
+The primary dataset will be the WMT19 English-German translation dataset, a widely recognized dataset for machine translation tasks. This dataset includes aligned text pairs that ensure consistency and quality for training and evaluation. The dataset will be preprocessed to remove noise, tokenize text, and convert it into a format compatible with transformer models.
+
+**Pipeline Tools and Workflow**
+A structured ML pipeline will be developed using Cookiecutter for project organization, Docker for containerization, and DVC (Data Version Control) for managing data and experiments. Weights & Biases will be integrated to monitor training progress, analyze metrics, and facilitate hyperparameter tuning.
+
+**Expected Outcome**
+By fine-tuning the T5-small model and employing a robust pipeline, this project aims to deliver a high-performing English-to-German translation model. The final system will be optimized for deployment and scalability, ensuring it is ready for real-world applications.
+
 
 Project Organization
 ------------
@@ -64,4 +73,4 @@ Project Organization
 
 --------
 
-Hello and good morning.
+
