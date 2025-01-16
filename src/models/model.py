@@ -2,12 +2,10 @@ from typing import Dict, List, Optional
 
 import pytorch_lightning as pl
 import torch
+from torchtext.data.metrics import bleu_score
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 
 from src.models import _MODEL_PATH
-
-# Ny metrik BLEU specifikt for translation
-import pytext
 
 
 class Model(pl.LightningModule):
@@ -18,8 +16,8 @@ class Model(pl.LightningModule):
         Models are obtained using the code from:
             https://huggingface.co/docs/transformers/model_doc/t5
         Model and tokenizer are loaded from pretrained, per the above link.
-        Then model is sat to relevant device ('cuda' if available) and it
-        is assigned learning rate and batch size based on input parameters.
+        Then model is set to the relevant device ('cuda' if available) and it
+        is assigned a learning rate and batch size based on input parameters.
 
         Parameters
         ----------
@@ -27,8 +25,8 @@ class Model(pl.LightningModule):
             Learning rate for the training of this model. Must be a positive value!
 
         batch_size : [integer, float], optional
-            Batch size for when training this model. Must be strictly greater than 0.
-            (Any batch size of type float will be cast to integer!)
+            Batch size for training this model. Must be strictly greater than 0.
+            (Any batch size of type float will be cast to an integer!)
 
         Raises
         ------
@@ -44,12 +42,12 @@ class Model(pl.LightningModule):
 
         super().__init__(*args, **kwargs)
 
-        if type(lr) is not float and type(lr) is not int:
+        if not isinstance(lr, (float, int)):
             raise TypeError("Learning rate must be either an integer or a float.")
         if lr <= 0:
             raise ValueError("Learning rate must be greater than zero!")
 
-        if type(batch_size) is not int:
+        if not isinstance(batch_size, int):
             raise TypeError("Batch size must be an integer.")
         if batch_size <= 0:
             raise ValueError("Batch size must be greater than 0!")
@@ -67,14 +65,15 @@ class Model(pl.LightningModule):
 
     def forward(self, x: List[str]) -> List[str]:
         """
-            https://huggingface.co/docs/transformers/model_doc/t5#inference
-        """
+        Perform a forward pass with the model.
 
+        https://huggingface.co/docs/transformers/model_doc/t5#inference
+        """
         input_ids = self.tokenizer(
             x, return_tensors="pt", padding=True, truncation=True, max_length=128
         ).input_ids.to(self.t5.device)
 
-        # forward pass
+        # Forward pass
         outputs = self.t5.generate(input_ids=input_ids, max_new_tokens=20)
 
         return [
@@ -86,7 +85,9 @@ class Model(pl.LightningModule):
         self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
     ) -> torch.Tensor:
         """
-            From https://huggingface.co/docs/transformers/model_doc/t5#training
+        Perform training inference.
+
+        From https://huggingface.co/docs/transformers/model_doc/t5#training
         """
         data = batch["translation"]["en"]
         labels = batch["translation"]["de"]
@@ -105,38 +106,40 @@ class Model(pl.LightningModule):
         loss = self.t5(
             input_ids=input_ids, attention_mask=attention_mask, labels=target_encoding,
         )
-        # Ny loss
-        input_text = [f'Translate english to german: {d}' for d in data]
-        inputs = self.tokenizer(...)
-        output_ids = self.t5.generate(...)
-        output_text = self.tokenizer.decode(output_ids)
-        # TODO: candidates = output.candites
-        return loss, output_ids, output_text
+        return loss.loss
 
     def training_step(
         self, batch: List[str], batch_idx: Optional[int] = None
     ) -> torch.Tensor:
         loss = self._inference_training(batch, batch_idx)
-        self.log("train loss", loss, batch_size=self.batch_size)
-        # TODO: Add metrics
+        self.log("train_loss", loss, batch_size=self.batch_size)
         return loss
 
     def validation_step(
-        self, batch: List[str], batch_idx: Optional[int] = None
+        self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
     ) -> torch.Tensor:
         loss = self._inference_training(batch, batch_idx)
-        self.log("val loss", loss, batch_size=self.batch_size)
-        # TODO: Add metrics
-        # TODO: torchtext.data.metrics.bleu_score(candidate_corpus, references_corpus, max_n=4, weights=[0.25, 0.25, 0.25, 0.25])
-        torchtext.data.metrics.bleu_score(output_ids, output_text, max_n=4, weights=[0.25, 0.25, 0.25, 0.25])
+        self.log("val_loss", loss, batch_size=self.batch_size)
+
+        # BLEU score computation
+        candidate_corpus = [self.forward(batch["translation"]["en"])]
+        references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
+        bleu = bleu_score(candidate_corpus, references_corpus, max_n=4)
+        self.log("val_bleu_score", bleu)
+
         return loss
 
     def test_step(
-        self, batch: List[str], batch_idx: Optional[int] = None
+        self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
     ) -> torch.Tensor:
         loss = self._inference_training(batch, batch_idx)
-        self.log("test loss", loss, batch_size=self.batch_size)
-        # TODO: Add metrics
+        self.log("test_loss", loss, batch_size=self.batch_size)
+
+        # BLEU score computation
+        candidate_corpus = [self.forward(batch["translation"]["en"])]
+        references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
+        bleu = bleu_score(candidate_corpus, references_corpus, max_n=4)
+        self.log("test_bleu_score", bleu)
 
         return loss
 

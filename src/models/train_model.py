@@ -1,10 +1,11 @@
 import argparse
 from typing import Optional
+from pathlib import Path
 
 import pytorch_lightning as pl
 import torch
 import wandb
-from datasets import Dataset
+from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
 
@@ -12,82 +13,80 @@ from src.models.model import Model
 
 
 def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False):
-    if not (wandbkey is None):
-        wandb.login(key=wandbkey)  # input API key for wandb for docker
-        project = "mlops_exam_project"
-        entity = "chrillebon"
-        anonymous = None
-        mode = "online"
+    # Initialize W&B
+    if wandbkey:
+        wandb.login(key=wandbkey)  # Input API key for wandb for Docker
+        wandb_mode = "online"
     else:
-        project = None
-        entity = None
-        anonymous = "must"
-        mode = "disabled"
+        wandb_mode = "disabled"
 
     wandb.init(
-        project=project,
-        entity=entity,
-        anonymous=anonymous,
+        project="mlops_exam_project",
+        entity="chrillebon",
         config=config,
-        mode=mode,
+        mode=wandb_mode,
     )
 
-    lr = wandb.config.lr
-    epochs = wandb.config.epochs
-    batch_size = wandb.config.batch_size
-    seed = wandb.config.batch_size
+    # Extract hyperparameters from W&B
+    lr = wandb.config.get("lr", 0.001)
+    epochs = wandb.config.get("epochs", 10)
+    batch_size = wandb.config.get("batch_size", 32)
+    seed = wandb.config.get("seed", None)
 
+    # Set seed if provided
     if seed is not None:
         torch.manual_seed(seed)
 
+    # Load datasets
+    root_dir = Path(__file__).resolve().parents[2]
+    train_path = root_dir / "data/processed/train"
+    val_path = root_dir / "data/processed/validation"
+
+    trainset = load_from_disk(train_path)
+    valset = load_from_disk(val_path)
+
+    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=4, shuffle=True)
+    testloader = DataLoader(valset, batch_size=batch_size, num_workers=4)
+
+    # Initialize the model
     model = Model(lr=lr, batch_size=batch_size)
 
-    if not (wandbkey is None):
+    # Configure W&B logger
+    logger = (
+        pl.loggers.WandbLogger(project="mlops_exam_project", entity="chrillebon")
+        if wandbkey
+        else None
+    )
+    if wandbkey:
         wandb.watch(model, log_freq=100)
-        logger = pl.loggers.WandbLogger(
-            project="mlops_exam_project", entity="chrillebon"
-        )
-    else:
-        logger = True
 
-    trainset = Dataset.load_from_disk("data/processed/train")
-    testset = Dataset.load_from_disk("data/processed/validation")
-    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=8)
-    testloader = DataLoader(testset, batch_size=batch_size, num_workers=8)
+    # Setup checkpointing
+    checkpoint_callback = ModelCheckpoint(dirpath="models/checkpoints", save_top_k=1, monitor="val_loss")
 
-    checkpoint_callback = ModelCheckpoint(dirpath="/models/checkpoints")
+    # Determine accelerator
+    accelerator = "gpu" if torch.cuda.is_available() else "cpu"
 
-    if torch.cuda.is_available():
-        accelerator = "gpu"
-        devices = [6]
-    else:
-        accelerator = None
-        devices = None
+    # Debug mode limits
+    limit = 0.1 if debug_mode else 1.0
 
-    if debug_mode:
-        limit = 0.1
-    else:
-        limit = 1.0
-
+    # Initialize Trainer
     trainer = pl.Trainer(
         max_epochs=epochs,
-        default_root_dir="",
         callbacks=[checkpoint_callback],
         accelerator=accelerator,
-        devices=devices,
-        strategy="ddp",
+        devices=1,  # Adjust devices based on your setup
+        logger=logger,
         limit_train_batches=limit,
         limit_val_batches=limit,
-        profiler="simple",
-        logger=logger,
+        profiler="simple" if debug_mode else None,
     )
 
+    # Train the model
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
 
-    torch.save(model.state_dict(), "/models/epoch=final.pt")
-    print("Done!")
-
-    # Mangler at uploade de gemte filer til drive. Gøres i docker
+    # Save the model
+    torch.save(model.state_dict(), "models/epoch=final.pt")
+    print("Training complete!")
 
 
 if __name__ == "__main__":
@@ -96,7 +95,7 @@ if __name__ == "__main__":
         "--config",
         default="src/models/config/default_params.yaml",
         type=str,
-        help="configuration file with hyperparameters",
+        help="Configuration file with hyperparameters",
     )
     parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")
     parser.add_argument(
@@ -104,5 +103,4 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     train(args.config, args.wandbkey, args.debug_mode)
