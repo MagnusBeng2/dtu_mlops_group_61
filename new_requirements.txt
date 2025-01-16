@@ -1,0 +1,12 @@
+click==8.1.8
+datasets==3.2.0
+fastapi==0.115.6
+Markdown==3.7
+pytest==8.3.4
+python-dotenv==1.0.1
+pytorch_lightning==2.5.0.post0
+setuptools==75.1.0
+torch==2.4.1
+tqdm==4.67.1
+transformers==4.48.0
+wandb==0.19.3

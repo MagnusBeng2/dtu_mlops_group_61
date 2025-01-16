@@ -99,9 +99,12 @@ class Model(pl.LightningModule):
         ).input_ids.to(self.t5.device)
         input_ids = encoding["input_ids"]
         attention_mask = encoding["attention_mask"]
-        loss = self.t5(
+        output = self.t5(
             input_ids=input_ids, attention_mask=attention_mask, labels=target_encoding,
-        ).loss
+        )
+        # Ny loss
+        loss = output.loss
+        # TODO: candidates = output.candites
         return loss
 
     def training_step(
@@ -110,6 +113,7 @@ class Model(pl.LightningModule):
         loss = self._inference_training(batch, batch_idx)
         self.log("train loss", loss, batch_size=self.batch_size)
         # TODO: Add metrics
+
         return loss
 
     def validation_step(
@@ -118,6 +122,7 @@ class Model(pl.LightningModule):
         loss = self._inference_training(batch, batch_idx)
         self.log("val loss", loss, batch_size=self.batch_size)
         # TODO: Add metrics
+        # TODO: torchtext.data.metrics.bleu_score(candidate_corpus, references_corpus, max_n=4, weights=[0.25, 0.25, 0.25, 0.25])
         return loss
 
     def test_step(
