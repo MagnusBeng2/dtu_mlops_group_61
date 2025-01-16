@@ -6,6 +6,9 @@ from transformers import T5ForConditionalGeneration, T5Tokenizer
 
 from src.models import _MODEL_PATH
 
+# Ny metrik BLEU specifikt for translation
+import pytext
+
 
 class Model(pl.LightningModule):
     def __init__(
@@ -99,13 +102,16 @@ class Model(pl.LightningModule):
         ).input_ids.to(self.t5.device)
         input_ids = encoding["input_ids"]
         attention_mask = encoding["attention_mask"]
-        output = self.t5(
+        loss = self.t5(
             input_ids=input_ids, attention_mask=attention_mask, labels=target_encoding,
         )
         # Ny loss
-        loss = output.loss
+        input_text = [f'Translate english to german: {d}' for d in data]
+        inputs = self.tokenizer(...)
+        output_ids = self.t5.generate(...)
+        output_text = self.tokenizer.decode(output_ids)
         # TODO: candidates = output.candites
-        return loss
+        return loss, output_ids, output_text
 
     def training_step(
         self, batch: List[str], batch_idx: Optional[int] = None
@@ -113,7 +119,6 @@ class Model(pl.LightningModule):
         loss = self._inference_training(batch, batch_idx)
         self.log("train loss", loss, batch_size=self.batch_size)
         # TODO: Add metrics
-
         return loss
 
     def validation_step(
@@ -123,6 +128,7 @@ class Model(pl.LightningModule):
         self.log("val loss", loss, batch_size=self.batch_size)
         # TODO: Add metrics
         # TODO: torchtext.data.metrics.bleu_score(candidate_corpus, references_corpus, max_n=4, weights=[0.25, 0.25, 0.25, 0.25])
+        torchtext.data.metrics.bleu_score(output_ids, output_text, max_n=4, weights=[0.25, 0.25, 0.25, 0.25])
         return loss
 
     def test_step(
