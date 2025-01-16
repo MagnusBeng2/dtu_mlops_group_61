@@ -99,6 +99,7 @@ target/
 
 data/
 
+wmt19/
 /data
 
 lightning_logs/
