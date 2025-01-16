@@ -2,8 +2,8 @@ from typing import Dict, List, Optional
 
 import pytorch_lightning as pl
 import torch
-from torchtext.data.metrics import bleu_score
 from transformers import T5ForConditionalGeneration, T5Tokenizer
+from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 
 from src.models import _MODEL_PATH
 
@@ -122,9 +122,13 @@ class Model(pl.LightningModule):
         self.log("val_loss", loss, batch_size=self.batch_size)
 
         # BLEU score computation
-        candidate_corpus = [self.forward(batch["translation"]["en"])]
+        candidate_corpus = self.forward(batch["translation"]["en"])
         references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
-        bleu = bleu_score(candidate_corpus, references_corpus, max_n=4)
+        bleu = corpus_bleu(
+            references_corpus,
+            [cand.split() for cand in candidate_corpus],
+            smoothing_function=SmoothingFunction().method1,
+        )
         self.log("val_bleu_score", bleu)
 
         return loss
@@ -136,9 +140,13 @@ class Model(pl.LightningModule):
         self.log("test_loss", loss, batch_size=self.batch_size)
 
         # BLEU score computation
-        candidate_corpus = [self.forward(batch["translation"]["en"])]
+        candidate_corpus = self.forward(batch["translation"]["en"])
         references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
-        bleu = bleu_score(candidate_corpus, references_corpus, max_n=4)
+        bleu = corpus_bleu(
+            references_corpus,
+            [cand.split() for cand in candidate_corpus],
+            smoothing_function=SmoothingFunction().method1,
+        )
         self.log("test_bleu_score", bleu)
 
         return loss

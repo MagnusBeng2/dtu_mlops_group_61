@@ -42,8 +42,8 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
     train_path = root_dir / "data/processed/train"
     val_path = root_dir / "data/processed/validation"
 
-    trainset = load_from_disk(train_path)
-    valset = load_from_disk(val_path)
+    trainset = load_from_disk(str(train_path))
+    valset = load_from_disk(str(val_path))
 
     trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=4, shuffle=True)
     testloader = DataLoader(valset, batch_size=batch_size, num_workers=4)
