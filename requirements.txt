@@ -19,3 +19,5 @@ fastapi>=0.83.0
 protobuf==3.19.5
 watchdog
 pathtools==0.1.2; python_version < "3.12"
+fsspec==2024.6.1
+
