@@ -1,54 +1,46 @@
 # -*- coding: utf-8 -*-
 import logging
-import os
 from pathlib import Path
 from typing import Optional
 
 import click
-from datasets import Dataset, load_from_disk
+from datasets import load_from_disk
 from dotenv import find_dotenv, load_dotenv
 
 
 @click.command()
-@click.argument("raw_dir", type=click.Path(exists=True))
-@click.argument("processed_dir", type=click.Path())
 @click.option("--k", default=None, type=int, help="Number of samples to include in the processed dataset")
-def main(raw_dir: str, processed_dir: str, k: Optional[int] = None) -> None:
+def main(k: Optional[int] = None) -> None:
     """
-    Runs data processing scripts to turn raw data from (../raw) into
-    cleaned data ready to be analyzed (saved in ../processed).
+    Runs data processing scripts to turn raw data from /data/raw into
+    cleaned data ready to be analyzed (saved in /data/processed).
 
     Parameters
     ----------
-    raw_dir : str, required
-        A path to the raw data directory.
-    processed_dir : str, required
-        A path to save the processed data.
     k : integer, optional
-        The amount of datapoints to include from the dataset.
+        The number of datapoints to include in the processed dataset.
 
     Raises
     ------
-    TypeError
-        If raw_dir or processed_dir aren't strings.
     ValueError
         If k is a negative integer.
     """
-    if type(raw_dir) is not str or type(processed_dir) is not str:
-        raise TypeError("Both raw_dir and processed_dir must be strings denoting paths.")
+    # Define default directories
+    raw_dir = Path(__file__).resolve().parents[2] / "data/raw"
+    processed_dir = Path(__file__).resolve().parents[2] / "data/processed"
+
+    # Validate k
     if k is not None and k <= 0:
-        raise ValueError("k must be a positive amount of datapoints.")
+        raise ValueError("k must be a positive number of datapoints.")
 
     logger = logging.getLogger(__name__)
-    logger.info("Processing data from raw to processed format...")
+    logger.info("Processing data from /data/raw to /data/processed...")
 
     # Ensure processed_dir exists
-    processed_dir = Path(processed_dir)
     processed_dir.mkdir(parents=True, exist_ok=True)
 
     # Load raw data from raw_dir
     logger.info(f"Loading raw data from {raw_dir}...")
-    raw_dir = Path(raw_dir)
     train_data = load_from_disk(raw_dir / "train.arrow")
     val_data = load_from_disk(raw_dir / "validation.arrow")
 
@@ -71,10 +63,6 @@ def main(raw_dir: str, processed_dir: str, k: Optional[int] = None) -> None:
         }
 
     # Apply preprocessing
-    print("Preprocessing the dataset...")
-    train_data = train_data.map(preprocess_function, batched=True)
-    val_data = val_data.map(preprocess_function, batched=True)
-
     logger.info("Preprocessing the dataset...")
     train_data = train_data.map(preprocess_function, batched=True)
     val_data = val_data.map(preprocess_function, batched=True)
