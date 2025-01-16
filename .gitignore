@@ -97,8 +97,6 @@ target/
 # wandb
 /wandb/
 
-data/
-
 wmt19/
 /data
 
