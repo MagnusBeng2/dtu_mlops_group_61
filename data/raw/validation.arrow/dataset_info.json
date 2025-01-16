@@ -1,52 +1,128 @@
 {
-  "builder_name": "iwslt2017",
-  "citation": "@inproceedings{cettolo-etal-2017-overview,\n    title = \"Overview of the {IWSLT} 2017 Evaluation Campaign\",\n    author = {Cettolo, Mauro  and\n      Federico, Marcello  and\n      Bentivogli, Luisa  and\n      Niehues, Jan  and\n      St{\\\"u}ker, Sebastian  and\n      Sudoh, Katsuhito  and\n      Yoshino, Koichiro  and\n      Federmann, Christian},\n    booktitle = \"Proceedings of the 14th International Conference on Spoken Language Translation\",\n    month = dec # \" 14-15\",\n    year = \"2017\",\n    address = \"Tokyo, Japan\",\n    publisher = \"International Workshop on Spoken Language Translation\",\n    url = \"https://aclanthology.org/2017.iwslt-1.1\",\n    pages = \"2--14\",\n}\n",
-  "config_name": "iwslt2017-en-de",
-  "dataset_name": "iwslt2017",
-  "dataset_size": 44427829,
-  "description": "The IWSLT 2017 Multilingual Task addresses text translation, including zero-shot translation, with a single MT system across all directions including English, German, Dutch, Italian and Romanian. As unofficial task, conventional bilingual text translation is offered between English and Arabic, French, Japanese, Chinese, German and Korean.\n",
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "de-en",
+  "dataset_name": "wmt19",
+  "dataset_size": 7646413318,
+  "description": "",
   "download_checksums": {
-    "https://huggingface.co/datasets/iwslt2017/resolve/main/data/2017-01-trnted/texts/en/de/en-de.zip": {
-      "num_bytes": 16758334,
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00000-of-00016.parquet": {
+      "num_bytes": 383575346,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00001-of-00016.parquet": {
+      "num_bytes": 129542573,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00002-of-00016.parquet": {
+      "num_bytes": 102423118,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00003-of-00016.parquet": {
+      "num_bytes": 176052870,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00004-of-00016.parquet": {
+      "num_bytes": 282134311,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00005-of-00016.parquet": {
+      "num_bytes": 182733180,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00006-of-00016.parquet": {
+      "num_bytes": 250741402,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00007-of-00016.parquet": {
+      "num_bytes": 335895713,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00008-of-00016.parquet": {
+      "num_bytes": 232112090,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00009-of-00016.parquet": {
+      "num_bytes": 224251476,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00010-of-00016.parquet": {
+      "num_bytes": 195584674,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00011-of-00016.parquet": {
+      "num_bytes": 340355685,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00012-of-00016.parquet": {
+      "num_bytes": 400681905,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00013-of-00016.parquet": {
+      "num_bytes": 306798300,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00014-of-00016.parquet": {
+      "num_bytes": 305414314,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/train-00015-of-00016.parquet": {
+      "num_bytes": 230940305,
+      "checksum": null
+    },
+    "hf://datasets/wmt19@c8a87a86736e7bf10c74c22e9033eba9146774e9/de-en/validation-00000-of-00001.parquet": {
+      "num_bytes": 494994,
       "checksum": null
     }
   },
-  "download_size": 16758334,
+  "download_size": 4079732256,
   "features": {
     "translation": {
       "languages": [
-        "en",
-        "de"
+        "de",
+        "en"
       ],
       "_type": "Translation"
     }
   },
-  "homepage": "https://sites.google.com/site/iwsltevaluation2017/TED-tasks",
+  "homepage": "",
   "license": "",
-  "size_in_bytes": 61186163,
+  "size_in_bytes": 11726145574,
   "splits": {
     "train": {
       "name": "train",
-      "num_bytes": 42608380,
-      "num_examples": 206112,
-      "dataset_name": "iwslt2017"
-    },
-    "test": {
-      "name": "test",
-      "num_bytes": 1608474,
-      "num_examples": 8079,
-      "dataset_name": "iwslt2017"
+      "num_bytes": 7645655677,
+      "num_examples": 34782245,
+      "shard_lengths": [
+        1522000,
+        2942782,
+        3617891,
+        2008891,
+        2614891,
+        2297890,
+        1905890,
+        2243890,
+        2413890,
+        2724780,
+        1702000,
+        1550890,
+        1980890,
+        1785890,
+        2909890,
+        559890
+      ],
+      "dataset_name": "wmt19"
     },
     "validation": {
       "name": "validation",
-      "num_bytes": 210975,
-      "num_examples": 888,
-      "dataset_name": "iwslt2017"
+      "num_bytes": 757641,
+      "num_examples": 2998,
+      "dataset_name": "wmt19"
     }
   },
   "version": {
-    "version_str": "1.0.0",
-    "major": 1,
+    "version_str": "0.0.0",
+    "major": 0,
     "minor": 0,
     "patch": 0
   }
