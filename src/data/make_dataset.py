@@ -39,10 +39,10 @@ def main(k: Optional[int] = None) -> None:
     # Ensure processed_dir exists
     processed_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load raw data from raw_dir
+    # Convert raw_dir to string for compatibility with `load_from_disk`
     logger.info(f"Loading raw data from {raw_dir}...")
-    train_data = load_from_disk(raw_dir / "train.arrow")
-    val_data = load_from_disk(raw_dir / "validation.arrow")
+    train_data = load_from_disk(str(raw_dir / "train.arrow"))
+    val_data = load_from_disk(str(raw_dir / "validation.arrow"))
 
     # Limit the dataset size if k is specified
     if k is not None:
@@ -69,8 +69,8 @@ def main(k: Optional[int] = None) -> None:
 
     # Save processed data to the processed_dir
     logger.info(f"Saving processed data to {processed_dir}...")
-    train_data.save_to_disk(processed_dir / "train")
-    val_data.save_to_disk(processed_dir / "validation")
+    train_data.save_to_disk(str(processed_dir / "train"))
+    val_data.save_to_disk(str(processed_dir / "validation"))
 
     logger.info("Data processing complete.")
 
