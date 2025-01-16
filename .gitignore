@@ -97,9 +97,8 @@ target/
 # wandb
 /wandb/
 
-#data/
+data/
 
-wmt19/
-# /data
+/data
 
 lightning_logs/
