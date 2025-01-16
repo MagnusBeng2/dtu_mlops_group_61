@@ -16,6 +16,7 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
 ]
+description = "Exam project for course 02476 MLOps at DTU"
 readme = "README.md"
 dynamic = ["dependencies", "optional-dependencies"]
 
@@ -23,7 +24,7 @@ dynamic = ["dependencies", "optional-dependencies"]
 dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools.dynamic.optional-dependencies]
-dev = {file = ['requirements_dev.txt']}
+dev = {file = ["requirements_dev.txt"]}
 
 [tool.ruff]
 line-length = 120
@@ -33,3 +34,6 @@ select = ["I"]
 
 [tool.coverage.run]
 omit = ["tests/*"]
+
+[project.scripts]
+data = "src.data.data:download_and_reduce_wmt19"
