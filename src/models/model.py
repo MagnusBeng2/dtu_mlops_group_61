@@ -4,7 +4,6 @@ import pytorch_lightning as pl
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
-import time
 
 from src.models import _MODEL_PATH
 
@@ -44,7 +43,7 @@ class Model(pl.LightningModule):
 
         # Load tokenizer and model
         self.tokenizer = T5Tokenizer.from_pretrained(
-            tokenizer_name, cache_dir=_MODEL_PATH, model_max_length=512, legacy=False
+            tokenizer_name, cache_dir=_MODEL_PATH, model_max_length=64, legacy=False
         )
         self.t5 = T5ForConditionalGeneration.from_pretrained(
             tokenizer_name, cache_dir=_MODEL_PATH
@@ -89,62 +88,46 @@ class Model(pl.LightningModule):
             attention_mask=attention_mask,
             labels=labels,
         ).loss
-        self.log(f"{step_name}_loss", loss, batch_size=self.batch_size)
+        self.log(f"{step_name}_loss", loss, batch_size=self.batch_size, logger=False)
         return loss
 
-
-    def training_step(self, batch, batch_idx):
-        print(f"Batch {batch_idx} input_ids: {batch['input_ids'].shape}")
-        print(f"Batch {batch_idx} labels: {batch['labels'].shape}")
-        loss = self._shared_step(batch, "train")
-        print(f"Batch {batch_idx} loss: {loss.item()}")
-        return loss
-
-    def validation_step(self, batch: Dict[str, torch.Tensor], batch_idx: Optional[int] = None) -> torch.Tensor:
-        loss = self._shared_step(batch, "val")
-
-        # Compute BLEU score
-        candidate_corpus = self.forward(batch["input_ids"], batch["attention_mask"])
-        references_corpus = [[ref.split()] for ref in batch["labels"]]
-        bleu = corpus_bleu(
+    def calculate_bleu(self, predictions_corpus: List[List[str]], references_corpus: List[List[List[str]]]) -> float:
+        return corpus_bleu(
             references_corpus,
-            [cand.split() for cand in candidate_corpus],
+            predictions_corpus,
             smoothing_function=SmoothingFunction().method1,
         )
-        self.log("val_bleu_score", bleu, batch_size=self.batch_size)
 
+    def training_step(self, batch, batch_idx):
+        loss = self._shared_step(batch, "train")
         return loss
 
     def validation_step(self, batch, batch_idx):
-        # Forward pass for generating predictions
+        # Generate predictions
         outputs = self.t5.generate(
             input_ids=batch["input_ids"],
             attention_mask=batch["attention_mask"],
             max_length=128,
-            num_beams=4,  # Adjust as needed
+            num_beams=4
         )
 
-        # Decode the predictions and labels
+        # Decode predictions and labels
         decoded_predictions = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
         decoded_labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
-        
-        print(f"Predictions: {decoded_predictions}")
-        print(f"Labels: {decoded_labels}")
 
-        # Prepare the references and predictions corpora
-        references_corpus = [[ref.split()] for ref in decoded_labels]  # Split each label into words
-        predictions_corpus = [pred.split() for pred in decoded_predictions]  # Split each prediction into words
-
-        # Calculate BLEU score or other metrics
+        # Compute BLEU score
+        references_corpus = [[ref.split()] for ref in decoded_labels]
+        predictions_corpus = [pred.split() for pred in decoded_predictions]
         bleu_score = self.calculate_bleu(predictions_corpus, references_corpus)
+        self.log("val_bleu", bleu_score, prog_bar=True, logger=False)  # Log BLEU score
 
-        # Log BLEU score or any other metrics
-        self.log("val_bleu", bleu_score, prog_bar=True)
+        # Compute loss without logging it again
+        input_ids = batch["input_ids"].to(self.device)
+        attention_mask = batch["attention_mask"].to(self.device)
+        labels = batch["labels"].to(self.device)
+        loss = self.t5(input_ids=input_ids, attention_mask=attention_mask, labels=labels).loss
 
-        # Calculate and log the validation loss
-        loss = self.loss_function(outputs, batch["labels"])  # Replace with your actual loss function
-        self.log("val_loss", loss, prog_bar=True)
-
+        # Return the loss (do not log it here since it's logged in training loop)
         return loss
 
 

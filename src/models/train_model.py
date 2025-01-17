@@ -54,14 +54,9 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
 
     print(f"Training dataset size: {len(trainset)}")
     print(f"Validation dataset size: {len(valset)}")
-    print("Sample batch:", next(iter(DataLoader(trainset, batch_size=1, num_workers=2))))
 
     trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=2, shuffle=True)
     testloader = DataLoader(valset, batch_size=batch_size, num_workers=2)
-
-    print(f"Number of training batches: {len(trainloader)}")
-    print(f"Number of validation batches: {len(testloader)}")
-    print("Sample batch:", next(iter(trainloader)))
 
     # Initialize the model
     model = Model(lr=lr, batch_size=batch_size)
