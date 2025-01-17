@@ -31,20 +31,13 @@ def get_next_version(base_dir="lightning_logs"):
     next_version = max(versions, default=-1) + 1
     return os.path.join(base_dir, f"version_{next_version}")
 
-
 def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False):
     # Initialize W&B
-    if wandbkey:
-        wandb.login(key=wandbkey)
-        wandb_mode = "online"
-    else:
-        wandb_mode = "disabled"
-
+    wandb.login(key=wandbkey)
     wandb.init(
-        project="mlops_exam_project",
-        entity="chrillebon",
+        project="dtu_mlops_group_61",
+        entity="mabbi-danmarks-tekniske-universitet-dtu",
         config=config,
-        mode=wandb_mode,
     )
 
     # Extract hyperparameters
@@ -69,16 +62,18 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
     print(f"Training dataset size: {len(trainset)}")
     print(f"Validation dataset size: {len(valset)}")
 
-    trainloader = DataLoader(trainset, batch_size=1, num_workers=12, shuffle=True)
-    testloader = DataLoader(valset, batch_size=1, num_workers=0)
+    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=12, shuffle=True)
+    testloader = DataLoader(valset, batch_size=batch_size, num_workers=0)
 
     # Initialize the model
     model = Model(lr=lr, batch_size=batch_size)
 
     # Configure W&B logger
-    logger = pl.loggers.WandbLogger(project="mlops_exam_project", entity="chrillebon") if wandbkey else None
-    if wandbkey:
-        wandb.watch(model, log_freq=100)
+    logger = pl.loggers.WandbLogger(
+        project="dtu_mlops_group_61",
+        entity="mabbi-danmarks-tekniske-universitet-dtu"
+    )
+    wandb.watch(model, log_freq=100)
 
     # Setup checkpointing
     checkpoint_dir = os.path.join(get_next_version(), "checkpoints")
@@ -101,7 +96,7 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
 
     # Initialize Trainer
     trainer = pl.Trainer(
-        max_epochs=5,
+        max_epochs=epochs,
         limit_train_batches=1,
         limit_val_batches=1,
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
@@ -112,10 +107,23 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
         num_sanity_val_steps=0,  # Disable sanity check
     )
 
+    # Log epoch losses and accuracy to W&B
+    trainer.callbacks.append(
+        pl.callbacks.LambdaCallback(
+            on_train_epoch_end=lambda trainer, pl_module: wandb.log({
+                "train_loss": trainer.callback_metrics.get("train_loss", 0),
+                "train_acc": trainer.callback_metrics.get("train_acc", 0),
+            }),
+            on_validation_epoch_end=lambda trainer, pl_module: wandb.log({
+                "val_loss": trainer.callback_metrics.get("val_loss", 0),
+                "val_acc": trainer.callback_metrics.get("val_acc", 0),
+            })
+        )
+    )
+
     # Train the model
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
     print("Training complete!")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
