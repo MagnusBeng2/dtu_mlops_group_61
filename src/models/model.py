@@ -130,6 +130,31 @@ class Model(pl.LightningModule):
         # Return the loss (do not log it here since it's logged in training loop)
         return loss
 
+    def test_step(self, batch, batch_idx):
+        # Generate predictions
+        outputs = self.t5.generate(
+            input_ids=batch["input_ids"],
+            attention_mask=batch["attention_mask"],
+            max_length=128,
+            num_beams=4,  # Adjust as needed
+        )
 
+        # Decode predictions and labels
+        decoded_predictions = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        decoded_labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
+
+        # Compute BLEU score
+        references_corpus = [[ref.split()] for ref in decoded_labels]
+        predictions_corpus = [pred.split() for pred in decoded_predictions]
+        bleu_score = self.calculate_bleu(predictions_corpus, references_corpus)
+
+        # Compute test loss
+        test_loss = self._shared_step(batch, "test")  # Shared loss computation
+
+        # Log test metrics
+        self.log_dict({"test_loss": test_loss, "test_bleu": bleu_score}, prog_bar=True)
+
+        return {"test_loss": test_loss, "test_bleu": bleu_score}
+    
     def configure_optimizers(self) -> torch.optim.Optimizer:
         return torch.optim.AdamW(self.parameters(), lr=self.lr)

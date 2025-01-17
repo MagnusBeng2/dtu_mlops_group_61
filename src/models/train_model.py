@@ -83,7 +83,7 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
 
     # Initialize Trainer
     trainer = pl.Trainer(
-        max_epochs=1,  # Train for only one epoch
+        max_epochs=3,  # Train for only one epoch
         limit_train_batches=1,  # Use only one batch for training
         limit_val_batches=1,  # Use only one batch for validation
         accelerator="cpu",  # Use CPU or GPU if available
