@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 import pytorch_lightning as pl
 import torch
+import os
 import wandb
 from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -14,8 +15,21 @@ from src.models.model import Model  # Import your custom LightningModule
 
 # Warnings disabled
 warnings.filterwarnings("ignore", message="Can't initialize NVML")
-warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", message="The torchvision.datapoints and torchvision.transforms.v2 namespaces are still Beta")
+warnings.filterwarnings("ignore", message="Passing a tuple of `past_key_values` is deprecated")
 torchvision.disable_beta_transforms_warning()
+
+# Get correct version directory
+def get_next_version(base_dir="lightning_logs"):
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
+        return os.path.join(base_dir, "version_0")
+
+    versions = [
+        int(v.split("_")[-1]) for v in os.listdir(base_dir) if v.startswith("version_")
+    ]
+    next_version = max(versions, default=-1) + 1
+    return os.path.join(base_dir, f"version_{next_version}")
 
 
 def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False):
@@ -36,7 +50,7 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
     # Extract hyperparameters
     lr = wandb.config.get("lr", 0.001)
     epochs = wandb.config.get("epochs", 5)
-    batch_size = wandb.config.get("batch_size", 16)
+    batch_size = wandb.config.get("batch_size", 1)
     seed = wandb.config.get("seed", None)
 
     if seed is not None:
@@ -55,8 +69,8 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
     print(f"Training dataset size: {len(trainset)}")
     print(f"Validation dataset size: {len(valset)}")
 
-    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=2, shuffle=True)
-    testloader = DataLoader(valset, batch_size=batch_size, num_workers=2)
+    trainloader = DataLoader(trainset, batch_size=1, num_workers=12, shuffle=True)
+    testloader = DataLoader(valset, batch_size=1, num_workers=0)
 
     # Initialize the model
     model = Model(lr=lr, batch_size=batch_size)
@@ -67,10 +81,14 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
         wandb.watch(model, log_freq=100)
 
     # Setup checkpointing
+    checkpoint_dir = os.path.join(get_next_version(), "checkpoints")
+    os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_callback = ModelCheckpoint(
-        dirpath=f"models/checkpoints/{wandb.run.name if wandbkey else 'default_run'}",
+        dirpath=checkpoint_dir,
+        filename="epoch={epoch}-step={step}",
         save_top_k=1,
         monitor="val_loss",
+        mode="min",
     )
 
     # Determine debug mode limits dynamically
@@ -83,21 +101,19 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
 
     # Initialize Trainer
     trainer = pl.Trainer(
-        max_epochs=3,  # Train for only one epoch
-        limit_train_batches=1,  # Use only one batch for training
-        limit_val_batches=1,  # Use only one batch for validation
-        accelerator="cpu",  # Use CPU or GPU if available
-        devices=1,  # Number of devices to use
+        max_epochs=5,
+        limit_train_batches=1,
+        limit_val_batches=1,
+        accelerator="gpu" if torch.cuda.is_available() else "cpu",
+        devices=1,
         logger=logger,
-        precision=32,  # Use full precision for simplicity
-        num_sanity_val_steps=0,  # Skip validation sanity checks
+        precision=32,
+        callbacks=[checkpoint_callback],
+        num_sanity_val_steps=0,  # Disable sanity check
     )
 
     # Train the model
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
-
-    # Save the model
-    torch.save(model.state_dict(), "models/epoch=final.pt")
     print("Training complete!")
 
 

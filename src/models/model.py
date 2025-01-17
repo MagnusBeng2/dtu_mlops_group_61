@@ -5,6 +5,13 @@ import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 
+import warnings
+warnings.filterwarnings("ignore", message="Can't initialize NVML")
+warnings.filterwarnings("ignore", message="The torchvision.datapoints and torchvision.transforms.v2 namespaces are still Beta")
+warnings.filterwarnings("ignore", message="Passing a tuple of `past_key_values` is deprecated")
+import torchvision
+torchvision.disable_beta_transforms_warning()
+
 from src.models import _MODEL_PATH
 
 
@@ -43,7 +50,7 @@ class Model(pl.LightningModule):
 
         # Load tokenizer and model
         self.tokenizer = T5Tokenizer.from_pretrained(
-            tokenizer_name, cache_dir=_MODEL_PATH, model_max_length=64, legacy=False
+            tokenizer_name, cache_dir=_MODEL_PATH, model_max_length=128, legacy=False
         )
         self.t5 = T5ForConditionalGeneration.from_pretrained(
             tokenizer_name, cache_dir=_MODEL_PATH
@@ -119,15 +126,18 @@ class Model(pl.LightningModule):
         references_corpus = [[ref.split()] for ref in decoded_labels]
         predictions_corpus = [pred.split() for pred in decoded_predictions]
         bleu_score = self.calculate_bleu(predictions_corpus, references_corpus)
-        self.log("val_bleu", bleu_score, prog_bar=True, logger=False)  # Log BLEU score
+        bleu_score = torch.tensor(bleu_score, dtype=torch.float32)  # Convert to torch.float32
+        self.log("val_bleu", bleu_score, prog_bar=True)
 
-        # Compute loss without logging it again
+        # Compute validation loss
         input_ids = batch["input_ids"].to(self.device)
         attention_mask = batch["attention_mask"].to(self.device)
         labels = batch["labels"].to(self.device)
         loss = self.t5(input_ids=input_ids, attention_mask=attention_mask, labels=labels).loss
 
-        # Return the loss (do not log it here since it's logged in training loop)
+        # Log validation loss as 'val_loss'
+        self.log("val_loss", loss, prog_bar=True)
+
         return loss
 
     def test_step(self, batch, batch_idx):
@@ -149,10 +159,14 @@ class Model(pl.LightningModule):
         bleu_score = self.calculate_bleu(predictions_corpus, references_corpus)
 
         # Compute test loss
-        test_loss = self._shared_step(batch, "test")  # Shared loss computation
+        input_ids = batch["input_ids"].to(self.device)
+        attention_mask = batch["attention_mask"].to(self.device)
+        labels = batch["labels"].to(self.device)
+        test_loss = self.t5(input_ids=input_ids, attention_mask=attention_mask, labels=labels).loss
 
-        # Log test metrics
-        self.log_dict({"test_loss": test_loss, "test_bleu": bleu_score}, prog_bar=True)
+        # Log test metrics (ensure each key is logged only once)
+        self.log("test_loss", test_loss, prog_bar=True, batch_size=self.batch_size)
+        self.log("test_bleu", bleu_score, prog_bar=True, batch_size=self.batch_size)
 
         return {"test_loss": test_loss, "test_bleu": bleu_score}
     
