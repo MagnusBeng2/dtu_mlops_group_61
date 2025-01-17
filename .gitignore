@@ -96,7 +96,7 @@ target/
 
 # wandb
 /wandb/
-
+/temp.py
 wmt19/
 /data
 
