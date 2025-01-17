@@ -1,68 +1,65 @@
 import argparse
-# import os
+import os
 from typing import Optional
-
-# from google.cloud import storage
-# import torch
 from fastapi import FastAPI
-
 from src.models.model import Model
 
 app = FastAPI()
 
-model = Model()
+
+def get_latest_checkpoint(base_dir="lightning_logs"):
+    """
+    Get the latest model checkpoint from the lightning_logs directory.
+    """
+    versions = sorted(
+        (v for v in os.listdir(base_dir) if v.startswith("version_")),
+        key=lambda x: int(x.split("_")[-1]),
+        reverse=True,
+    )
+    for version in versions:
+        checkpoints_dir = os.path.join(base_dir, version, "checkpoints")
+        if os.path.exists(checkpoints_dir) and os.listdir(checkpoints_dir):
+            return os.path.join(checkpoints_dir, os.listdir(checkpoints_dir)[0])
+    raise FileNotFoundError(f"No checkpoints found in {base_dir}.")
 
 
-def newest_model(bucket):
-    blobs = list(bucket.list_blobs())
-    blobs = sorted(blobs, key=lambda blob: str(blob.time_created), reverse=True)
-    for blob in blobs:
-        if blob.name[-3:] == ".pt":
-            return blob
-        return None
+def load_model():
+    """
+    Load the model from the latest checkpoint or initialize a fresh model.
+    """
+    try:
+        checkpoint_path = get_latest_checkpoint()
+        print(f"Loading model from checkpoint: {checkpoint_path}")
+        return Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
+    except FileNotFoundError as e:
+        print(e)
+        print("No checkpoints found. Using an untrained model.")
+        return Model()
 
 
 @app.get("/translate/{input}")
-def translate(
-    input: str = "Hello world",
-    checkpoint: Optional[str] = None,  # "models/epoch=0-step=1875-v1.ckpt"
-):
+def translate(input: str = "Hello world"):
     """
-        If a new model is uploaded to the bucket, the function downloads it when invoked.
+    Translate the input string from English to German using the loaded model.
     """
-    """
-    DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-    # strict = True if torch.cuda.is_available() else False
-
-    client = storage.Client()
-    bucket = client.get_bucket("model-checkpoints-mlops-exam")
-    if checkpoint is None:
-        blob = newest_model(bucket)
-    else:
-        blob = bucket.get_blob(checkpoint)
-    filename = os.path.join('models', blob.name)
-    if not os.path.isfile(filename):
-        if not os.path.isdir('models'):
-            os.mkdir('models')
-        blob.download_to_filename(filename=filename)
-    state_dict = torch.load(filename)  # pickle.loads(blob.download_as_string())
-    model = Model().to(DEVICE) """  #
-    # Model.load_from_checkpoint(
-    # checkpoint_path=checkpoint, map_location=DEVICE,
-    # )
-    # model = Model()
-    # model.load_state_dict(state_dict)
-
-    return {"en": input, "de translation": model(input)[0]}
+    prediction = model.forward(
+        input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
+        attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
+    )
+    return {"en": input, "de translation": prediction[0]}
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=str, help="English string to be translated")
-    parser.add_argument(
-        "--checkpoint", default=None, type=str, help="Path to checkpoint"
-    )
     args = parser.parse_args()
-    input = args.input
 
-    print(translate(args.input, args.checkpoint))
+    # Load the model
+    model = load_model()
+
+    # Translate the input
+    if args.input:
+        result = translate(input=args.input)
+        print(result)
+    else:
+        print("Please provide an input string using the --input argument.")

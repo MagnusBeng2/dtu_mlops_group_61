@@ -5,6 +5,13 @@ from datasets import Dataset
 from torch.utils.data import DataLoader
 from src.models.model import Model
 
+# Warnings disabled
+import torchvision
+import warnings
+warnings.filterwarnings("ignore", message="Can't initialize NVML")
+warnings.filterwarnings("ignore", message="The torchvision.datapoints and torchvision.transforms.v2 namespaces are still Beta")
+warnings.filterwarnings("ignore", message="Passing a tuple of `past_key_values` is deprecated")
+torchvision.disable_beta_transforms_warning()
 
 def get_latest_checkpoint(base_dir="lightning_logs"):
     # Find all version folders
