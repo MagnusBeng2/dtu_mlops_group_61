@@ -6,13 +6,14 @@ from typing import Optional
 import click
 from datasets import load_from_disk
 from dotenv import find_dotenv, load_dotenv
+from transformers import T5Tokenizer
 
 
 @click.command()
 @click.option("--k", default=None, type=int, help="Number of samples to include in the processed dataset")
 def main(k: Optional[int] = None) -> None:
     """
-    Runs data processing scripts to turn raw data from /data/raw into
+    Runs data processing scripts to turn raw data from /data/raw/reduced_50000 into
     cleaned data ready to be analyzed (saved in /data/processed).
 
     Parameters
@@ -26,7 +27,7 @@ def main(k: Optional[int] = None) -> None:
         If k is a negative integer.
     """
     # Define default directories
-    raw_dir = Path(__file__).resolve().parents[2] / "data/raw"
+    raw_dir = Path(__file__).resolve().parents[2] / "data/raw/reduced_50000"
     processed_dir = Path(__file__).resolve().parents[2] / "data/processed"
 
     # Validate k
@@ -34,7 +35,7 @@ def main(k: Optional[int] = None) -> None:
         raise ValueError("k must be a positive number of datapoints.")
 
     logger = logging.getLogger(__name__)
-    logger.info("Processing data from /data/raw to /data/processed...")
+    logger.info("Processing data from /data/raw/reduced_50000 to /data/processed...")
 
     # Ensure processed_dir exists
     processed_dir.mkdir(parents=True, exist_ok=True)
@@ -50,22 +51,41 @@ def main(k: Optional[int] = None) -> None:
         train_data = train_data.select(range(min(len(train_data), k)))
         val_data = val_data.select(range(min(len(val_data), k)))
 
-    # Example preprocessing: lowercasing and stripping text
-    def preprocess_function(examples):
-        return {
-            "translation": [
-                {
-                    "en": translation["en"].strip().lower(),
-                    "de": translation["de"].strip().lower(),
-                }
-                for translation in examples["translation"]
-            ]
-        }
+    # Initialize tokenizer
+    tokenizer = T5Tokenizer.from_pretrained("t5-small")
 
+    # Define preprocessing function
+    def preprocess_function(examples):
+        model_inputs = tokenizer(
+            [translation["en"] for translation in examples["translation"]],
+            max_length=128,
+            padding="max_length",
+            truncation=True,
+        )
+        labels = tokenizer(
+            [translation["de"] for translation in examples["translation"]],
+            max_length=128,
+            padding="max_length",
+            truncation=True,
+        )
+        model_inputs["labels"] = labels["input_ids"]
+        return model_inputs
+    
     # Apply preprocessing
     logger.info("Preprocessing the dataset...")
+    print(f"Train data columns: {train_data.column_names}")
+    print(f"Validation data columns: {val_data.column_names}")
     train_data = train_data.map(preprocess_function, batched=True)
     val_data = val_data.map(preprocess_function, batched=True)
+    print("Sample training data (truncated):", {k: train_data[0][k][:10] for k in train_data[0].keys() if isinstance(train_data[0][k], list)})
+    print("Sample validation data:", val_data[0])
+
+    train_data.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    val_data.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+    
+    # Verify preprocessing
+    logger.info(f"First preprocessed training example: {train_data[0]}")
+    logger.info(f"First preprocessed validation example: {val_data[0]}")
 
     # Save processed data to the processed_dir
     logger.info(f"Saving processed data to {processed_dir}...")

@@ -4,152 +4,149 @@ import pytorch_lightning as pl
 import torch
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
+import time
 
 from src.models import _MODEL_PATH
 
 
 class Model(pl.LightningModule):
     def __init__(
-        self, lr: Optional[float] = 1e-3, batch_size: Optional[int] = 1, *args, **kwargs
+        self, lr: float = 1e-3, batch_size: int = 1, tokenizer_name: str = "t5-small"
     ) -> None:
         """
-        Models are obtained using the code from:
-            https://huggingface.co/docs/transformers/model_doc/t5
-        Model and tokenizer are loaded from pretrained, per the above link.
-        Then model is set to the relevant device ('cuda' if available) and it
-        is assigned a learning rate and batch size based on input parameters.
+        A PyTorch Lightning wrapper for the T5-small model.
 
         Parameters
         ----------
-        lr : [float integer], optional
-            Learning rate for the training of this model. Must be a positive value!
+        lr : float
+            Learning rate for training. Must be positive.
 
-        batch_size : [integer, float], optional
-            Batch size for training this model. Must be strictly greater than 0.
-            (Any batch size of type float will be cast to an integer!)
+        batch_size : int
+            Batch size for training. Must be greater than 0.
+
+        tokenizer_name : str
+            Name of the tokenizer to use (e.g., "t5-small").
 
         Raises
         ------
-        TypeError
-            If the learning rate is either not an integer nor a float.
         ValueError
-            If the learning rate isn't positive.
-        TypeError
-            If the batch size is not an integer.
-        ValueError
-            If the batch size is less than or equal to zero.
+            If learning rate or batch size are invalid.
         """
+        super().__init__()
 
-        super().__init__(*args, **kwargs)
-
-        if not isinstance(lr, (float, int)):
-            raise TypeError("Learning rate must be either an integer or a float.")
         if lr <= 0:
             raise ValueError("Learning rate must be greater than zero!")
-
-        if not isinstance(batch_size, int):
-            raise TypeError("Batch size must be an integer.")
         if batch_size <= 0:
-            raise ValueError("Batch size must be greater than 0!")
+            raise ValueError("Batch size must be greater than zero!")
 
-        self.tokenizer = T5Tokenizer.from_pretrained(
-            "t5-small", cache_dir=_MODEL_PATH, model_max_length=512
-        )
-
-        self.t5 = T5ForConditionalGeneration.from_pretrained(
-            "t5-small", cache_dir=_MODEL_PATH
-        )
-        self.add_module("t5", self.t5)
         self.lr = lr
         self.batch_size = batch_size
 
-    def forward(self, x: List[str]) -> List[str]:
+        # Load tokenizer and model
+        self.tokenizer = T5Tokenizer.from_pretrained(
+            tokenizer_name, cache_dir=_MODEL_PATH, model_max_length=512, legacy=False
+        )
+        self.t5 = T5ForConditionalGeneration.from_pretrained(
+            tokenizer_name, cache_dir=_MODEL_PATH
+        )
+        self.save_hyperparameters()
+
+    def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> List[str]:
         """
-        Perform a forward pass with the model.
+        Perform a forward pass for inference.
 
-        https://huggingface.co/docs/transformers/model_doc/t5#inference
+        Parameters
+        ----------
+        input_ids : torch.Tensor
+            The tokenized input IDs.
+
+        attention_mask : torch.Tensor
+            The attention mask.
+
+        Returns
+        -------
+        List[str]
+            List of generated output strings.
         """
-        input_ids = self.tokenizer(
-            x, return_tensors="pt", padding=True, truncation=True, max_length=128
-        ).input_ids.to(self.t5.device)
-
-        # Forward pass
-        outputs = self.t5.generate(input_ids=input_ids, max_new_tokens=20)
-
+        outputs = self.t5.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=20)
         return [
             self.tokenizer.decode(output, skip_special_tokens=True)
             for output in outputs
         ]
 
-    def _inference_training(
-        self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
-    ) -> torch.Tensor:
+    def _shared_step(self, batch: Dict[str, torch.Tensor], step_name: str) -> torch.Tensor:
         """
-        Perform training inference.
+        Perform a shared step for training, validation, and testing.
+        """
+        # Extract tensors directly from batch
+        input_ids = batch["input_ids"].to(self.device)
+        attention_mask = batch["attention_mask"].to(self.device)
+        labels = batch["labels"].to(self.device)
 
-        From https://huggingface.co/docs/transformers/model_doc/t5#training
-        """
-        data = batch["translation"]["en"]
-        labels = batch["translation"]["de"]
-        encoding = self.tokenizer(
-            data,
-            return_tensors="pt",
-            padding="longest",
-            truncation=True,
-            max_length=512,
-        ).to(self.t5.device)
-        target_encoding = self.tokenizer(
-            labels, return_tensors="pt", padding=True, truncation=True, max_length=128
-        ).input_ids.to(self.t5.device)
-        input_ids = encoding["input_ids"]
-        attention_mask = encoding["attention_mask"]
+        # Compute loss
         loss = self.t5(
-            input_ids=input_ids, attention_mask=attention_mask, labels=target_encoding,
-        )
-        return loss.loss
-
-    def training_step(
-        self, batch: List[str], batch_idx: Optional[int] = None
-    ) -> torch.Tensor:
-        loss = self._inference_training(batch, batch_idx)
-        self.log("train_loss", loss, batch_size=self.batch_size)
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            labels=labels,
+        ).loss
+        self.log(f"{step_name}_loss", loss, batch_size=self.batch_size)
         return loss
 
-    def validation_step(
-        self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
-    ) -> torch.Tensor:
-        loss = self._inference_training(batch, batch_idx)
-        self.log("val_loss", loss, batch_size=self.batch_size)
 
-        # BLEU score computation
-        candidate_corpus = self.forward(batch["translation"]["en"])
-        references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
+    def training_step(self, batch, batch_idx):
+        print(f"Batch {batch_idx} input_ids: {batch['input_ids'].shape}")
+        print(f"Batch {batch_idx} labels: {batch['labels'].shape}")
+        loss = self._shared_step(batch, "train")
+        print(f"Batch {batch_idx} loss: {loss.item()}")
+        return loss
+
+    def validation_step(self, batch: Dict[str, torch.Tensor], batch_idx: Optional[int] = None) -> torch.Tensor:
+        loss = self._shared_step(batch, "val")
+
+        # Compute BLEU score
+        candidate_corpus = self.forward(batch["input_ids"], batch["attention_mask"])
+        references_corpus = [[ref.split()] for ref in batch["labels"]]
         bleu = corpus_bleu(
             references_corpus,
             [cand.split() for cand in candidate_corpus],
             smoothing_function=SmoothingFunction().method1,
         )
-        self.log("val_bleu_score", bleu)
+        self.log("val_bleu_score", bleu, batch_size=self.batch_size)
 
         return loss
 
-    def test_step(
-        self, batch: Dict[str, Dict[str, List[str]]], batch_idx: Optional[int] = None
-    ) -> torch.Tensor:
-        loss = self._inference_training(batch, batch_idx)
-        self.log("test_loss", loss, batch_size=self.batch_size)
-
-        # BLEU score computation
-        candidate_corpus = self.forward(batch["translation"]["en"])
-        references_corpus = [[ref.split()] for ref in batch["translation"]["de"]]
-        bleu = corpus_bleu(
-            references_corpus,
-            [cand.split() for cand in candidate_corpus],
-            smoothing_function=SmoothingFunction().method1,
+    def validation_step(self, batch, batch_idx):
+        # Forward pass for generating predictions
+        outputs = self.t5.generate(
+            input_ids=batch["input_ids"],
+            attention_mask=batch["attention_mask"],
+            max_length=128,
+            num_beams=4,  # Adjust as needed
         )
-        self.log("test_bleu_score", bleu)
+
+        # Decode the predictions and labels
+        decoded_predictions = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        decoded_labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
+        
+        print(f"Predictions: {decoded_predictions}")
+        print(f"Labels: {decoded_labels}")
+
+        # Prepare the references and predictions corpora
+        references_corpus = [[ref.split()] for ref in decoded_labels]  # Split each label into words
+        predictions_corpus = [pred.split() for pred in decoded_predictions]  # Split each prediction into words
+
+        # Calculate BLEU score or other metrics
+        bleu_score = self.calculate_bleu(predictions_corpus, references_corpus)
+
+        # Log BLEU score or any other metrics
+        self.log("val_bleu", bleu_score, prog_bar=True)
+
+        # Calculate and log the validation loss
+        loss = self.loss_function(outputs, batch["labels"])  # Replace with your actual loss function
+        self.log("val_loss", loss, prog_bar=True)
 
         return loss
+
 
     def configure_optimizers(self) -> torch.optim.Optimizer:
-        return torch.optim.Adam(self.parameters(), lr=self.lr)
+        return torch.optim.AdamW(self.parameters(), lr=self.lr)

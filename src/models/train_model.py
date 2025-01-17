@@ -1,21 +1,27 @@
+import torchvision
+import warnings
 import argparse
 from typing import Optional
 from pathlib import Path
-
+import time
 import pytorch_lightning as pl
 import torch
 import wandb
 from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
+from src.models.model import Model  # Import your custom LightningModule
 
-from src.models.model import Model
+# Warnings disabled
+warnings.filterwarnings("ignore", message="Can't initialize NVML")
+warnings.filterwarnings("ignore", category=UserWarning)
+torchvision.disable_beta_transforms_warning()
 
 
 def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False):
     # Initialize W&B
     if wandbkey:
-        wandb.login(key=wandbkey)  # Input API key for wandb for Docker
+        wandb.login(key=wandbkey)
         wandb_mode = "online"
     else:
         wandb_mode = "disabled"
@@ -27,58 +33,69 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
         mode=wandb_mode,
     )
 
-    # Extract hyperparameters from W&B
+    # Extract hyperparameters
     lr = wandb.config.get("lr", 0.001)
-    epochs = wandb.config.get("epochs", 10)
-    batch_size = wandb.config.get("batch_size", 32)
+    epochs = wandb.config.get("epochs", 5)
+    batch_size = wandb.config.get("batch_size", 16)
     seed = wandb.config.get("seed", None)
 
-    # Set seed if provided
     if seed is not None:
         torch.manual_seed(seed)
 
-    # Load datasets
+    # Load tokenized datasets
     root_dir = Path(__file__).resolve().parents[2]
     train_path = root_dir / "data/processed/train"
     val_path = root_dir / "data/processed/validation"
 
+    start_time = time.time()
     trainset = load_from_disk(str(train_path))
     valset = load_from_disk(str(val_path))
+    print(f"Loaded tokenized datasets in {time.time() - start_time:.2f} seconds.")
 
-    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=4, shuffle=True)
-    testloader = DataLoader(valset, batch_size=batch_size, num_workers=4)
+    print(f"Training dataset size: {len(trainset)}")
+    print(f"Validation dataset size: {len(valset)}")
+    print("Sample batch:", next(iter(DataLoader(trainset, batch_size=1, num_workers=2))))
+
+    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=2, shuffle=True)
+    testloader = DataLoader(valset, batch_size=batch_size, num_workers=2)
+
+    print(f"Number of training batches: {len(trainloader)}")
+    print(f"Number of validation batches: {len(testloader)}")
+    print("Sample batch:", next(iter(trainloader)))
 
     # Initialize the model
     model = Model(lr=lr, batch_size=batch_size)
 
     # Configure W&B logger
-    logger = (
-        pl.loggers.WandbLogger(project="mlops_exam_project", entity="chrillebon")
-        if wandbkey
-        else None
-    )
+    logger = pl.loggers.WandbLogger(project="mlops_exam_project", entity="chrillebon") if wandbkey else None
     if wandbkey:
         wandb.watch(model, log_freq=100)
 
     # Setup checkpointing
-    checkpoint_callback = ModelCheckpoint(dirpath="models/checkpoints", save_top_k=1, monitor="val_loss")
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=f"models/checkpoints/{wandb.run.name if wandbkey else 'default_run'}",
+        save_top_k=1,
+        monitor="val_loss",
+    )
 
-    # Determine accelerator
-    accelerator = "gpu" if torch.cuda.is_available() else "cpu"
-
-    # Debug mode limits
-    limit = 0.1 if debug_mode else 1.0
+    # Determine debug mode limits dynamically
+    if debug_mode:
+        limit_train_batches = max(1 / len(trainloader), 0.1)
+        limit_val_batches = max(1 / len(testloader), 0.1)
+    else:
+        limit_train_batches = 1.0
+        limit_val_batches = 1.0
 
     # Initialize Trainer
     trainer = pl.Trainer(
-        max_epochs=epochs,
-        callbacks=[checkpoint_callback],
-        accelerator=accelerator,
-        devices=1,  # Adjust devices based on your setup
+        max_epochs=1,  # Train for only one epoch
+        limit_train_batches=1,  # Use only one batch for training
+        limit_val_batches=1,  # Use only one batch for validation
+        accelerator="cpu",  # Use CPU or GPU if available
+        devices=1,  # Number of devices to use
         logger=logger,
-        limit_train_batches=limit,
-        limit_val_batches=limit,
-        profiler="simple" if debug_mode else None,
+        precision=32,  # Use full precision for simplicity
+        num_sanity_val_steps=0,  # Skip validation sanity checks
     )
 
     # Train the model
