@@ -12,3 +12,4 @@ torchvision==0.20.1
 tqdm==4.67.1
 transformers==4.48.0
 wandb==0.19.4
+sentencepiece==0.2.0
