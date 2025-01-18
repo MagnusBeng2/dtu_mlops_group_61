@@ -6,6 +6,8 @@ from src.models.model import Model
 
 app = FastAPI()
 
+# Initialize the model as a global variable
+model = None
 
 def get_latest_checkpoint(base_dir="lightning_logs"):
     """
@@ -37,11 +39,17 @@ def load_model():
         return Model()
 
 
+# Load the model when the module is imported
+model = load_model()
+
+
 @app.get("/translate/{input}")
 def translate(input: str = "Hello world"):
     """
     Translate the input string from English to German using the loaded model.
     """
+    if model is None:
+        raise RuntimeError("Model is not loaded. Please load the model before making a request.")
     prediction = model.forward(
         input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
         attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
@@ -51,15 +59,10 @@ def translate(input: str = "Hello world"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=str, help="English string to be translated")
+    parser.add_argument("--api", action="store_true", help="Run the API server")
     args = parser.parse_args()
 
-    # Load the model
-    model = load_model()
-
-    # Translate the input
-    if args.input:
-        result = translate(input=args.input)
-        print(result)
-    else:
-        print("Please provide an input string using the --input argument.")
+    # Run the API server
+    if args.api:
+        import uvicorn
+        uvicorn.run("predict_model:app", host="127.0.0.1", port=8000, reload=True)
