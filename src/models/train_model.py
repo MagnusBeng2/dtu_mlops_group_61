@@ -11,7 +11,7 @@ import wandb
 from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
-from model import Model  # Peter: I changed this because model is in the same directory as train_model.py
+from src.models.model import Model
 
 # Warnings disabled
 warnings.filterwarnings("ignore", message="Can't initialize NVML")
