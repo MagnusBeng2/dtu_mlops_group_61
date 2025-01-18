@@ -9,6 +9,7 @@ app = FastAPI()
 # Initialize the model as a global variable
 model = None
 
+
 def get_latest_checkpoint(base_dir="lightning_logs"):
     """
     Get the latest model checkpoint from the lightning_logs directory.
@@ -60,9 +61,22 @@ def translate(input: str = "Hello world"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--api", action="store_true", help="Run the API server")
+    parser.add_argument("--input", type=str, help="Translate the given input string")
     args = parser.parse_args()
 
-    # Run the API server
-    if args.api:
+    # Load the model
+    model = load_model()
+
+    # Handle command-line input for translation
+    if args.input:
+        prediction = model.forward(
+            input_ids=model.tokenizer(args.input, return_tensors="pt").input_ids,
+            attention_mask=model.tokenizer(args.input, return_tensors="pt").attention_mask,
+        )
+        print({"en": args.input, "de translation": prediction[0]})
+    elif args.api:
+        # Run the API server
         import uvicorn
         uvicorn.run("predict_model:app", host="127.0.0.1", port=8000, reload=True)
+    else:
+        print("Please specify either --input or --api.")
