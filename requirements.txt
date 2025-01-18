@@ -9,4 +9,9 @@ pytorch_lightning==2.5.0.post0
 setuptools==75.1.0
 tqdm==4.67.1
 transformers==4.48.0
+<<<<<<< HEAD
 wandb==0.19.4
+=======
+wandb==0.19.4
+sentencepiece==0.2.0
+>>>>>>> refs/remotes/origin/main
