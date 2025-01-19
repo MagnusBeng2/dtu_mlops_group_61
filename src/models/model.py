@@ -95,7 +95,7 @@ class Model(pl.LightningModule):
             attention_mask=attention_mask,
             labels=labels,
         ).loss
-        self.log(f"{step_name}_loss", loss, batch_size=self.batch_size, logger=False)
+        self.log(f"{step_name}_loss", loss, batch_size=self.batch_size, logger=True)
         return loss
 
     def calculate_bleu(self, predictions_corpus: List[List[str]], references_corpus: List[List[List[str]]]) -> float:
