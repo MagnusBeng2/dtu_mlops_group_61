@@ -37,3 +37,4 @@ omit = ["tests/*"]
 
 [project.scripts]
 data = "src.data.data:download_and_reduce_wmt19"
+make_dataset = "src.data.make_dataset:main"
