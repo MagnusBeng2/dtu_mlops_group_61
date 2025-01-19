@@ -1,6 +1,7 @@
 import os
 
 import pytest
+import torch
 from datasets import Dataset
 
 from tests import _PATH_DATA
@@ -14,12 +15,12 @@ def test_dataset_format():
     X_train = trainset[0]
     X_test = testset[0]
 
-    assert list(X_train.keys()) == ["translation"]
-    assert set(X_train["translation"].keys()) == {"en", "de"}
-    assert isinstance(X_train["translation"]["en"], str)
-    assert isinstance(X_train["translation"]["de"], str)
+    assert list(X_train.keys()) == ["input_ids", "attention_mask", "labels"]
+    assert isinstance(X_train["input_ids"], torch.Tensor), "input_ids is not a tensor"
+    assert isinstance(X_train["attention_mask"], torch.Tensor), "input_ids is not a tensor"
+    assert isinstance(X_train["labels"], torch.Tensor), "input_ids is not a tensor"
 
-    assert list(X_test.keys()) == ["translation"]
-    assert set(X_test["translation"].keys()) == {"en", "de"}
-    assert isinstance(X_test["translation"]["en"][0], str)
-    assert isinstance(X_test["translation"]["de"][0], str)
+    assert list(X_test.keys()) == ["input_ids", "attention_mask", "labels"]
+    assert isinstance(X_test["input_ids"], torch.Tensor), "input_ids is not a tensor"
+    assert isinstance(X_test["attention_mask"], torch.Tensor), "input_ids is not a tensor"
+    assert isinstance(X_test["labels"], torch.Tensor), "input_ids is not a tensor"
