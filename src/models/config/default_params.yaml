@@ -7,3 +7,6 @@ batch_size:
   value: 16
 seed:
   value: 42
+
+wandbkey:
+  value: 6c90481a16aa4dc6b2905c30a6de1a230d6f427e
