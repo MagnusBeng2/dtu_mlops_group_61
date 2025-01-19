@@ -19,6 +19,13 @@ warnings.filterwarnings("ignore", message="The torchvision.datapoints and torchv
 warnings.filterwarnings("ignore", message="Passing a tuple of `past_key_values` is deprecated")
 torchvision.disable_beta_transforms_warning()
 
+# Set random seed
+def set_seed(seed: int):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 # Get correct version directory
 def get_next_version(base_dir="lightning_logs"):
     if not os.path.exists(base_dir):
@@ -31,23 +38,29 @@ def get_next_version(base_dir="lightning_logs"):
     next_version = max(versions, default=-1) + 1
     return os.path.join(base_dir, f"version_{next_version}")
 
-def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False):
+def train(args):
+    debug_mode = args.debug_mode
     # Initialize W&B
-    wandb.login(key=wandbkey)
+    if args.wandbkey:
+        wandb.login(key=args.wandbkey)
     wandb.init(
         project="dtu_mlops_group_61",
         entity="mabbi-danmarks-tekniske-universitet-dtu",
-        config=config,
+        config={
+            "lr": args.lr,
+            "epochs": args.epochs,
+            "batch_size": args.batch_size,
+            "seed": args.seed,
+        },
     )
 
     # Extract hyperparameters
-    lr = wandb.config.get("lr", 0.001)
-    epochs = wandb.config.get("epochs", 5)
-    batch_size = wandb.config.get("batch_size", 1)
-    seed = wandb.config.get("seed", None)
+    lr = args.lr
+    epochs = args.epochs
+    batch_size = args.batch_size
+    seed = args.seed
 
-    if seed is not None:
-        torch.manual_seed(seed)
+    set_seed(seed)
 
     # Load tokenized datasets
     root_dir = Path(__file__).resolve().parents[2]
@@ -76,7 +89,7 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
     wandb.watch(model, log_freq=100)
 
     # Setup checkpointing
-    checkpoint_dir = os.path.join(get_next_version(), "checkpoints")
+    checkpoint_dir = os.path.join("lightning_logs", "checkpoints")
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_callback = ModelCheckpoint(
         dirpath=checkpoint_dir,
@@ -86,19 +99,11 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
         mode="min",
     )
 
-    # Determine debug mode limits dynamically
-    if debug_mode:
-        limit_train_batches = max(1 / len(trainloader), 0.1)
-        limit_val_batches = max(1 / len(testloader), 0.1)
-    else:
-        limit_train_batches = 1.0
-        limit_val_batches = 1.0
-
     # Initialize Trainer
     trainer = pl.Trainer(
         max_epochs=epochs,
-        limit_train_batches=1,
-        limit_val_batches=1,
+        limit_train_batches=0.1 if not debug_mode else 0.1,  # Use 10% of training batches in debug mode
+        limit_val_batches=0.1 if not debug_mode else 0.1,
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1,
         logger=logger,
@@ -107,36 +112,18 @@ def train(config: str, wandbkey: Optional[str] = None, debug_mode: bool = False)
         num_sanity_val_steps=0,  # Disable sanity check
     )
 
-    # Log epoch losses and accuracy to W&B
-    trainer.callbacks.append(
-        pl.callbacks.LambdaCallback(
-            on_train_epoch_end=lambda trainer, pl_module: wandb.log({
-                "train_loss": trainer.callback_metrics.get("train_loss", 0),
-                "train_acc": trainer.callback_metrics.get("train_acc", 0),
-            }),
-            on_validation_epoch_end=lambda trainer, pl_module: wandb.log({
-                "val_loss": trainer.callback_metrics.get("val_loss", 0),
-                "val_acc": trainer.callback_metrics.get("val_acc", 0),
-            })
-        )
-    )
-
     # Train the model
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
     print("Training complete!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--config",
-        default="src/models/config/default_params.yaml",
-        type=str,
-        help="Configuration file with hyperparameters",
-    )
+    parser.add_argument("--lr", default=0.001, type=float, help="Learning rate")
+    parser.add_argument("--epochs", default=5, type=int, help="Number of epochs")
+    parser.add_argument("--batch_size", default=32, type=int, help="Batch size")
+    parser.add_argument("--seed", default=42, type=int, help="Random seed")
     parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")
-    parser.add_argument(
-        "--debug_mode", action="store_true", help="Run only 10 percent of data"
-    )
+    parser.add_argument("--debug_mode", action="store_true", help="Run only a fraction of the dataset for quick testing")
 
     args = parser.parse_args()
-    train(args.config, args.wandbkey, args.debug_mode)
+    train(args)
