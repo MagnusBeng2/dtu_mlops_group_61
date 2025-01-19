@@ -21,7 +21,7 @@ A structured ML pipeline will be developed using Cookiecutter for project organi
 
 **Expected Outcome**
 
-By fine-tuning the T5-small model and employing a robust pipeline, the aim of this project is to deliver a high-performing English-to-German translation model. The final system will be optimized for deployment and scalability, ensuring it is applicable for real-world applications.
+By finetuning the T5-small model and employing a robust pipeline, the aim of this project is to deliver a high-performing English-to-German translation model. The final system will be optimized for deployment and scalability, ensuring it is applicable for real-world applications.
 
 
 Project Organization
