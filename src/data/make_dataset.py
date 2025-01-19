@@ -77,15 +77,9 @@ def main(k: Optional[int] = None) -> None:
     print(f"Validation data columns: {val_data.column_names}")
     train_data = train_data.map(preprocess_function, batched=True)
     val_data = val_data.map(preprocess_function, batched=True)
-    print("Sample training data (truncated):", {k: train_data[0][k][:10] for k in train_data[0].keys() if isinstance(train_data[0][k], list)})
-    print("Sample validation data:", val_data[0])
 
     train_data.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     val_data.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
-    
-    # Verify preprocessing
-    logger.info(f"First preprocessed training example: {train_data[0]}")
-    logger.info(f"First preprocessed validation example: {val_data[0]}")
 
     # Save processed data to the processed_dir
     logger.info(f"Saving processed data to {processed_dir}...")
