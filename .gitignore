@@ -101,3 +101,6 @@ wmt19/
 /data
 
 lightning_logs/
+
+profiling/*
+!profiling/.gitkeep

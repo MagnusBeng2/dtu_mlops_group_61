@@ -12,3 +12,4 @@ transformers==4.48.0
 wandb==0.19.4
 wandb==0.19.4
 sentencepiece==0.2.0
+snakeviz
