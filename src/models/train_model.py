@@ -40,9 +40,12 @@ def get_next_version(base_dir="lightning_logs"):
 
 def train(args):
     debug_mode = args.debug_mode
+
     # Initialize W&B
     if args.wandbkey:
         wandb.login(key=args.wandbkey)
+
+    # If wandb.config is active, use it for hyperparameters; otherwise, use args
     wandb.init(
         project="dtu_mlops_group_61",
         entity="mabbi-danmarks-tekniske-universitet-dtu",
@@ -53,13 +56,15 @@ def train(args):
             "seed": args.seed,
         },
     )
+    config = wandb.config  # Use Wandb config for both manual runs and sweeps
 
-    # Extract hyperparameters
-    lr = args.lr
-    epochs = args.epochs
-    batch_size = args.batch_size
-    seed = args.seed
+    # Extract hyperparameters from Wandb config
+    lr = config.lr
+    epochs = config.epochs
+    batch_size = config.batch_size
+    seed = config.seed
 
+    # Set the random seed
     set_seed(seed)
 
     # Load tokenized datasets
@@ -84,7 +89,7 @@ def train(args):
     # Configure W&B logger
     logger = pl.loggers.WandbLogger(
         project="dtu_mlops_group_61",
-        entity="mabbi-danmarks-tekniske-universitet-dtu"
+        entity="mabbi-danmarks-tekniske-universitet-dtu",
     )
     wandb.watch(model, log_freq=100)
 
@@ -102,8 +107,8 @@ def train(args):
     # Initialize Trainer
     trainer = pl.Trainer(
         max_epochs=epochs,
-        limit_train_batches=0.1 if not debug_mode else 0.1,  # Use 10% of training batches in debug mode
-        limit_val_batches=0.1 if not debug_mode else 0.1,
+        limit_train_batches=0.1 if debug_mode else 1.0,  # Use full dataset unless debug mode is active
+        limit_val_batches=0.1 if debug_mode else 1.0,
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
         devices=1,
         logger=logger,
@@ -119,7 +124,7 @@ def train(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", default=0.01, type=float, help="Learning rate")
-    parser.add_argument("--epochs", default=2, type=int, help="Number of epochs")
+    parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
     parser.add_argument("--batch_size", default=16, type=int, help="Batch size")
     parser.add_argument("--seed", default=42, type=int, help="Random seed")
     parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")

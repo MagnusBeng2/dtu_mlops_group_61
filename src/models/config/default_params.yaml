@@ -1,6 +1,6 @@
 
 lr:
-  value: 0.001
+  value: 0.5
 epochs:
   value: 2
 batch_size:
