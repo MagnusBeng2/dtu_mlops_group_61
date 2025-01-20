@@ -1,0 +1,43 @@
+name: "Data Workflow with CML"
+
+on:
+  push:
+    paths:
+      - 'data/**'
+  pull_request:
+    paths:
+      - 'data/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out the code
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        pip install cml  # Install the CML framework
+
+    # Run dataset_statistics and generate the report
+    - name: Generate Dataset Statistics
+      run: python -c "from data import dataset_statistics; dataset_statistics('data/processed')"
+
+    # Post the results as a comment on the pull request
+    - name: Comment Results
+      env:
+        REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cml comment create --token $REPO_TOKEN --file report.md
