@@ -9,7 +9,8 @@ version = "0.0.1"
 authors = [
   { name = "Magnus Bengtsson", email = "s216169@dtu.dk" },
   { name = "Peter Gründer", email = "s214987@dtu.dk" },
-  { name = "Alexander Jeppsson", email = "s215002@dtu.dk" },
+  { name = "Alexander Jeppsson", email = "s215002@dtu.dk"
+  { name = "Anes Sehovic", email = "s224190@dtu.dk"},
 ]
 keywords = ["MLOps"]
 classifiers = [
