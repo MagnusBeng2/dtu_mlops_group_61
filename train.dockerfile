@@ -10,7 +10,6 @@ COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY src/ src/
 
-WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 
 ENTRYPOINT ["python", "-u", "src/models/train_model.py"]
