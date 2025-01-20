@@ -1,10 +1,11 @@
-import argparse
 import os
 from typing import Optional
 from fastapi import FastAPI
 from src.models.model import Model
+import typer
 
 app = FastAPI()
+cli = typer.Typer()
 
 # Initialize the model as a global variable
 model = None
@@ -40,10 +41,6 @@ def load_model():
         return Model()
 
 
-# Load the model when the module is imported
-model = load_model()
-
-
 @app.get("/translate/{input}")
 def translate(input: str = "Hello world"):
     """
@@ -58,25 +55,29 @@ def translate(input: str = "Hello world"):
     return {"en": input, "de translation": prediction[0]}
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--api", action="store_true", help="Run the API server")
-    parser.add_argument("--input", type=str, help="Translate the given input string")
-    args = parser.parse_args()
-
-    # Load the model
+@cli.command()
+def main(api: bool = False, input: Optional[str] = None):
+    """
+    Main entry point for running the script as a command or API.
+    """
+    global model
     model = load_model()
 
-    # Handle command-line input for translation
-    if args.input:
+    if input:
+        # Translate a single input string
         prediction = model.forward(
-            input_ids=model.tokenizer(args.input, return_tensors="pt").input_ids,
-            attention_mask=model.tokenizer(args.input, return_tensors="pt").attention_mask,
+            input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
+            attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
         )
-        print({"en": args.input, "de translation": prediction[0]})
-    elif args.api:
+        print({"en": input, "de translation": prediction[0]})
+    elif api:
         # Run the API server
         import uvicorn
-        uvicorn.run("predict_model:app", host="127.0.0.1", port=8000, reload=True)
+        print("Starting the API server...")
+        uvicorn.run("src.models.predict_model:app", host="127.0.0.1", port=8000, reload=True)
     else:
         print("Please specify either --input or --api.")
+
+
+if __name__ == "__main__":
+    cli()

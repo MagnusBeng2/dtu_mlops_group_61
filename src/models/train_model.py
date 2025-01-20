@@ -121,7 +121,7 @@ def train(args):
     trainer.fit(model=model, train_dataloaders=trainloader, val_dataloaders=testloader)
     print("Training complete!")
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", default=0.01, type=float, help="Learning rate")
     parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
@@ -132,3 +132,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     train(args)
+
+if __name__ == "__main__":
+    main()
