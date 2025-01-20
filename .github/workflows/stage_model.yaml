@@ -1,0 +1,31 @@
+name: Check Staged Model
+
+on:
+  repository_dispatch:
+    types: staged_model
+
+jobs:
+  test_model:
+    runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+      WANDB_ENTITY: ${{ secrets.WANDB_ENTITY }}
+      WANDB_PROJECT: ${{ secrets.WANDB_PROJECT }}
+      MODEL_NAME: ${{ needs.identify_event.outputs.model_name }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
+        cache: pip
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install wandb transformers torch pytorch-lightning tqdm
+
+    - name: Run model tests
+      run: pytest tests/test_model.py
