@@ -11,7 +11,7 @@ def test_api_request_valid():
     assert response.json() == {
         "en": "The house is wonderful",
         "de translation": "Das Haus ist wunderbar.",
-    }, "API response is not as expected." 
+    }, "API response is not as expected."
 
 
 def test_api_request_empty_str():

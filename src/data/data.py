@@ -33,7 +33,7 @@ def download_and_reduce_wmt19(max_samples: int = 50000) -> None:
         save_path = save_dir / f"{split}.arrow"
         print(f"Saving reduced {split} data to {save_path}")
         data.save_to_disk(str(save_path))
-    
+
     print(f"Reduced dataset has been saved to {save_dir}.")
 
 

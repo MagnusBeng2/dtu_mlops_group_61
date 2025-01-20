@@ -3,7 +3,7 @@ FROM huggingface/transformers-pytorch-cpu
 # python:3.10-slim
 
 # Run a bunch of linux commands
-RUN apt update && \         
+RUN apt update && \
     apt install --no-install-recommends -y build essential gcc & \
     apt clean & rm -rf /var/lib/apt/lists/*
 

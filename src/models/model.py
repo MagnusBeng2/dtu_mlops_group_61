@@ -169,6 +169,6 @@ class Model(pl.LightningModule):
         self.log("test_bleu", bleu_score, prog_bar=True, batch_size=self.batch_size)
 
         return {"test_loss": test_loss, "test_bleu": bleu_score}
-    
+
     def configure_optimizers(self) -> torch.optim.Optimizer:
         return torch.optim.AdamW(self.parameters(), lr=self.lr)

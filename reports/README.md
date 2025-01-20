@@ -69,7 +69,7 @@ s183319, s194345, s185231, s184399, s194333
 >
 > Answer:
 
-In this project we utilized the [Transformers](https://github.com/huggingface/transformers) repository from the Huggingface group. This repository provides the [t5-small model](https://huggingface.co/t5-small), which is a natural language processing (NLP) model that can translate text from one language to another. In this project we have used the Trainer class in the pytorch lightning framework to train and test the t5-small model on a subset of the english/ german (en-de) subset of the [WMT19 dataset](https://huggingface.co/datasets/wmt19) (from the fourth conference on machine translation). We have used Weights and biases (`wandb`) to both handle the configuration file with the hyperparameters for the model and for logging the training and validation loss. 
+In this project we utilized the [Transformers](https://github.com/huggingface/transformers) repository from the Huggingface group. This repository provides the [t5-small model](https://huggingface.co/t5-small), which is a natural language processing (NLP) model that can translate text from one language to another. In this project we have used the Trainer class in the pytorch lightning framework to train and test the t5-small model on a subset of the english/ german (en-de) subset of the [WMT19 dataset](https://huggingface.co/datasets/wmt19) (from the fourth conference on machine translation). We have used Weights and biases (`wandb`) to both handle the configuration file with the hyperparameters for the model and for logging the training and validation loss.
 
 ## Coding environment
 
@@ -134,7 +134,7 @@ In this project we have used typing and written comments when the code is not co
 
 > **How many tests did you implement?**
 >
-> Answer: 
+> Answer:
 
 7
 
@@ -149,7 +149,7 @@ In this project we have used typing and written comments when the code is not co
 > *The total code coverage of code is X%, which includes all our source code. We are far from 100% coverage of our **
 > *code and even if we were then...*
 >
-> Answer: 
+> Answer:
 
 The total code coverage of code is 93%, which includes all our source code.
 | Name                          | STMTS | Miss | Cover | Missing        |
@@ -196,7 +196,7 @@ We added branch protection on the main branch. Hence we created a feature branch
 >
 > Answer:
 
-The wmt19 dataset originally contained around 9GB of data. Hence we decided to create a subset of the dataset. Data version control hereby contributed to an easy update of the data. We initially created a bucket in Google Cloud and used dvc to manage this. However s194333 did not have enough credit to sustain this service hence we had to create another bucket containing the same data with a different billing account. However we also stored the data on google drive, in case we potentially would use all credits on cloud again. Hence the dvc package proved to be very usefull for switching between different data storage options. In addition, dvc was an easy update to implement on all our devices since it only required some simple terminal commands. 
+The wmt19 dataset originally contained around 9GB of data. Hence we decided to create a subset of the dataset. Data version control hereby contributed to an easy update of the data. We initially created a bucket in Google Cloud and used dvc to manage this. However s194333 did not have enough credit to sustain this service hence we had to create another bucket containing the same data with a different billing account. However we also stored the data on google drive, in case we potentially would use all credits on cloud again. Hence the dvc package proved to be very usefull for switching between different data storage options. In addition, dvc was an easy update to implement on all our devices since it only required some simple terminal commands.
 
 ### Question 11
 
@@ -282,13 +282,13 @@ In W&B we track the training loss as seen on the figure below.
 
 ![Training loss](figures/train_loss.png)
 
-We see a small descrease of the loss. This metric is essential for showing whether the model is learning from the data during the training. 
+We see a small descrease of the loss. This metric is essential for showing whether the model is learning from the data during the training.
 
 We also track the validation loss as seen on the figure below.
 
 ![Validation loss](figures/val_loss.png)
 
-The validation loss is very important to monitor the models performance when presented to unknown data. 
+The validation loss is very important to monitor the models performance when presented to unknown data.
 
 We also perform a sweep in an attempt to optimize hyperparamters based on obtaining the lowest possible validation loss.
 
@@ -306,7 +306,7 @@ This did however show us that with the best hyperparameterse the validation loss
 > Example:
 > *For our project we developed several images: one for training, inference and deployment. For example to run the*
 > *training docker image: `docker run trainer:latest lr=1e-3 batch_size=64`. Link to docker file: <weblink>*
-> 
+>
 > Answer:
 
 In our project, reproducablity is very important, hence we utilize Docker in order to ensure that the application can be run on all devices. Hence we created docker images for training and deploying the model. Since building docker images are a time consuming task, we prefred google cloud for building the dockerimages in cloud using a dockerfile and triggers. After being build the docker images are run using google cloud Run.
@@ -347,7 +347,7 @@ We used the inbuild tool from pytorch lightning for profiling the training, but 
 > Answer:
 
 Buckets:
-We used GCP buckets for initally storing the data. However we quickly ran out of credits and hence had to create a new bucket containg the same data but with a different billing account. Furthermore we also used buckets for storring checkpoints. 
+We used GCP buckets for initally storing the data. However we quickly ran out of credits and hence had to create a new bucket containg the same data but with a different billing account. Furthermore we also used buckets for storring checkpoints.
 
 Build:
 Images are build using cloud build.
@@ -356,7 +356,7 @@ Triggers:
 In order to automatically build images triggers are used to connect the github repository to google cloud
 
 Containers:
-Images are stored in containers 
+Images are stored in containers
 
 Run:
 Models are deployed using google Run
@@ -378,7 +378,7 @@ Training framework where we run the docker image
 >
 > Answer:
 
-In this project we did not utilize the Compute engine and used Vertex AI instead. 
+In this project we did not utilize the Compute engine and used Vertex AI instead.
 
 ### Question 19
 
@@ -387,7 +387,7 @@ In this project we did not utilize the Compute engine and used Vertex AI instead
 >
 > Answer:
 
-The bucket can be seen in the following 
+The bucket can be seen in the following
 ```markdown
 ![my_image](figures/cloud_bucket.png)
 ```
@@ -423,15 +423,15 @@ Here the bucket wmt19-de-en refers to the full dataset whereas 30k-dataset refer
 > *For deployment we wrapped our model into application using ... . We first tried locally serving the model, which*
 > *worked. Afterwards we deployed it in the cloud, using ... . To invoke the service an user would call*
 > *`curl -X POST -F "file=@file.json"<weburl>`*
-> 
+>
 > Answer:
 
-Deploying the model locally was quite straight forward. Inputs to the model can easily be given through the terminal. However deploying in google cloud caused a lot more complication. For deployment we wrapped our model into an application using FastAPI and used cloud run. We were heavily challenged by the fact that after training the model the checkpoint could not be saved to a bucket on cloud without authentication, which we did not manage to implement. Hence we did not use the finetuned model for deployment directly trough cloud. 
+Deploying the model locally was quite straight forward. Inputs to the model can easily be given through the terminal. However deploying in google cloud caused a lot more complication. For deployment we wrapped our model into an application using FastAPI and used cloud run. We were heavily challenged by the fact that after training the model the checkpoint could not be saved to a bucket on cloud without authentication, which we did not manage to implement. Hence we did not use the finetuned model for deployment directly trough cloud.
 We did however manage to finetune the model on the hypatia cluster at DTU and uploading a checkpoint to bucket, however we had issues with downloading he checkpoint from within the python code (again due to authentication issues). Given a little more time, it would have been easy to setup DVC such that the model weights would be store alongside the dataset, whence we should have been able to get the finetuned model to deploy.
 
 In the training file, we used distributed data loading and multiple workers implemented through pytorch-lightning.
 
-Link to our model: 
+Link to our model:
 https://translation-gcp-app-jc4crsqeca-lz.a.run.app/translate/How are you doing?
 
 
@@ -462,7 +462,7 @@ We did not manage to implement monitoring. We would like to have monitoring impl
 >
 > Answer:
 
-s194333 did not use any credit for this project, since she managed to use all her credit on the project created for M21. In total on this project together we used around 5 dollars. Google cloud was not very transparent about billing account or money usage.  
+s194333 did not use any credit for this project, since she managed to use all her credit on the project created for M21. In total on this project together we used around 5 dollars. Google cloud was not very transparent about billing account or money usage.
 
 ## Overall discussion of project
 
@@ -484,9 +484,9 @@ s194333 did not use any credit for this project, since she managed to use all he
 > Answer:
 
 ![Graphical reprsentation of architecture](figures/graphical_representation_of_architecture.png)
-The starting point of the diagram is our local pytorch application, which we wrapped in the **pytorch lightning** framework. This served as the inital steps of creating the mlops pipeline. We version-controled our project using **git** via **Github**. A new environment can be initialized using either **Conda** or **pip**. We opted to use `pipreqs` for finding the package requirements of our project, which made for seamless instantiation of the projects *requirements.txt*. We utilized `wandb` in conjunction with **pytorch lightning** for logging the 'experiments'/ training of our *NLP* model. For training configuration `wandb` performed satisfactory, hence `hydra` was omited from this project. These are the essential parts which are contained into a **docker** container. Locally the project follows the codestructure of **Cookiecutter**. 
+The starting point of the diagram is our local pytorch application, which we wrapped in the **pytorch lightning** framework. This served as the inital steps of creating the mlops pipeline. We version-controled our project using **git** via **Github**. A new environment can be initialized using either **Conda** or **pip**. We opted to use `pipreqs` for finding the package requirements of our project, which made for seamless instantiation of the projects *requirements.txt*. We utilized `wandb` in conjunction with **pytorch lightning** for logging the 'experiments'/ training of our *NLP* model. For training configuration `wandb` performed satisfactory, hence `hydra` was omited from this project. These are the essential parts which are contained into a **docker** container. Locally the project follows the codestructure of **Cookiecutter**.
 
-In order to utilize the **GPC** git and dvc both provides a link from the local machine. Git furthermore enabled **Github actions** for testing the code before uploading to a remote storage. Using a **trigger** connected to the github repository we created **docker images** in **docker containers** in the cloud. 
+In order to utilize the **GPC** git and dvc both provides a link from the local machine. Git furthermore enabled **Github actions** for testing the code before uploading to a remote storage. Using a **trigger** connected to the github repository we created **docker images** in **docker containers** in the cloud.
 
 When training a dataset stored in a **GCP bucket** was utilized. Information sharing and version control of the dataset was handled by utilizing **dvc**. We interfaced with our application through **Cloud Run** by using the **Fast API** framework. Finally, we didn't utilize monitoring as we had plenty of work on our hands, trying to interface with and getting our model to run on cloud.
 
@@ -502,7 +502,7 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
-Our first time consuming task was to download the data. This was downloaded from huggingface which took a long time. We also spent an excessive amount of time trying to train our model on cloud. Some main factors contributing to this issue, was our funding running short and having to authenticate multiple frameworks within a docker container. s194333 created the project on GCP, however she quickly (within 48 hours) ran short on funding (complementary of the course) due to operations ineracting with the *bucket* storing our data. We aren't entirely certain as to what depleted the grants, however this greatly restricted our work. From docker we needed to authenticate dvc, GCP, in addition to `wandb`. This proved tremendously cumbersome as the authentication requires certfication, which we would preferably avoid storing in the docker image. During this process we spent a lot of time debugging. Due to long building times errors didn't occur immediatly, which resulted in a lot of reapeated idle time. 
+Our first time consuming task was to download the data. This was downloaded from huggingface which took a long time. We also spent an excessive amount of time trying to train our model on cloud. Some main factors contributing to this issue, was our funding running short and having to authenticate multiple frameworks within a docker container. s194333 created the project on GCP, however she quickly (within 48 hours) ran short on funding (complementary of the course) due to operations ineracting with the *bucket* storing our data. We aren't entirely certain as to what depleted the grants, however this greatly restricted our work. From docker we needed to authenticate dvc, GCP, in addition to `wandb`. This proved tremendously cumbersome as the authentication requires certfication, which we would preferably avoid storing in the docker image. During this process we spent a lot of time debugging. Due to long building times errors didn't occur immediatly, which resulted in a lot of reapeated idle time.
 
 In general most of the tools and frameworks were relativly new for us, which resulted in a lot of google searches and unknown errors. The exercises significantly prepared us for conducting the project, however we still had a lot to learn when making the project. This challenged us in many ways, however we ultimately managed to overcome these.
 
@@ -522,7 +522,7 @@ In general most of the tools and frameworks were relativly new for us, which res
 > Answer:
 
 
-Student s184399 created github repository with the cookiecutter structure. Furthermore the student was in charge of testing the models using unittesting and other previously mentioned tests. Furthermore he also contributed to building the docker images in the cloud and deploying the model. 
+Student s184399 created github repository with the cookiecutter structure. Furthermore the student was in charge of testing the models using unittesting and other previously mentioned tests. Furthermore he also contributed to building the docker images in the cloud and deploying the model.
 
 Student s185231 was in charge of building the docker images in the cloud. Furthermore the student helped downloading the data and creating the scripts for training and testing the model.
 
@@ -530,4 +530,4 @@ Student s183319 heavily contributed to the report and was in charge of managing 
 
 Student 194333 was responsible for creating the scripts for training and prediction as well as afterwards training the model. Furthermore the student analysed the results and performed a sweep in W&B.
 
-Student s194245 was in charge of handeling the data -all the way from downloading to utilizing. Furthermore the student was in charge of utilizing google cloud for training. 
+Student s194245 was in charge of handeling the data -all the way from downloading to utilizing. Furthermore the student was in charge of utilizing google cloud for training.

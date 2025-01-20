@@ -70,7 +70,7 @@ def main(k: Optional[int] = None) -> None:
         )
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
-    
+
     # Apply preprocessing
     logger.info("Preprocessing the dataset...")
     print(f"Train data columns: {train_data.column_names}")

@@ -94,7 +94,7 @@ build_predict_dockerfile:
 	docker build -f predict.dockerfile . -t translate2german
 
 ## Run docker image for predicting translations
-run_predict_dockerfile: 
+run_predict_dockerfile:
 	docker run --name translatecontainer -p 8501:8501 -e PORT=8501 translate2german
 
 #################################################################################

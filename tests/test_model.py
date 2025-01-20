@@ -28,7 +28,7 @@ def test_model_output():
     tokenized_input = tokenizer(input, return_tensors="pt", padding=True, truncation=True)
 
     output = model(
-        input_ids=tokenized_input["input_ids"], 
+        input_ids=tokenized_input["input_ids"],
         attention_mask=tokenized_input["attention_mask"]
     )
 

@@ -2,7 +2,7 @@
 FROM nvcr.io/nvidia/pytorch:22.07-py3
 
 # Run a bunch of linux commands
-RUN apt update && \         
+RUN apt update && \
     apt install --no-install-recommends -y build essential gcc & \
     apt clean & rm -rf /var/lib/apt/lists/*
 
