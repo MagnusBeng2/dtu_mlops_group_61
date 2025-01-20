@@ -15,3 +15,6 @@ sentencepiece==0.2.0
 snakeviz
 typer
 pre-commit
+fastapi
+requests
+uvicorn[standard]
