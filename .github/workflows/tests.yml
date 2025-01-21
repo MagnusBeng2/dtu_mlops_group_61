@@ -11,6 +11,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.12"]
         os: ["ubuntu-latest", "windows-latest","macos-latest"]
@@ -32,7 +33,7 @@ jobs:
     - name: Set PYTHONPATH for Windows
       if: runner.os == 'Windows'
       run: |
-        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%\src
+        $env:PYTHONPATH="$env:PYTHONPATH;$env:GITHUB_WORKSPACE\src"
 
     - name: Set PYTHONPATH for Unix-based systems
       if: runner.os != 'Windows'
