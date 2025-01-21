@@ -1,0 +1,5 @@
+*
+!docker.dockerfile
+!src/
+!requirements.txt
+!pyproject.toml
