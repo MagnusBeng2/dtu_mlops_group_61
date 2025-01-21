@@ -125,7 +125,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lr", default=0.01, type=float, help="Learning rate")
     parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
-    parser.add_argument("--batch_size", default=16, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=1, type=int, help="Batch size")
     parser.add_argument("--seed", default=42, type=int, help="Random seed")
     parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")
     parser.add_argument("--debug_mode", action="store_true", help="Run only a fraction of the dataset for quick testing")

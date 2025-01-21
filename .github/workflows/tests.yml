@@ -27,6 +27,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements_tests.txt
+
+    - name: Set PYTHONPATH
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/src
+
     - name: Test with pytest
       run: |
         pytest -v
