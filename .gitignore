@@ -98,10 +98,11 @@ target/
 /wandb/
 /temp.py
 wmt19/
-/data
 
 lightning_logs/
 
 profiling/*
 !profiling/.gitkeep
-data/
+
+/data/*
+!/data/.gitkeep
