@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 import torchvision
 import warnings
 import argparse
@@ -6,7 +10,6 @@ from pathlib import Path
 import time
 import pytorch_lightning as pl
 import torch
-import os
 import wandb
 from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint

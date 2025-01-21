@@ -1,4 +1,7 @@
+import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from typing import Optional
 from fastapi import FastAPI
 from src.models.model import Model
