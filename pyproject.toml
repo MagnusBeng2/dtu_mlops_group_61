@@ -20,6 +20,10 @@ description = "Exam project for course 02476 MLOps at DTU"
 readme = "README.md"
 dynamic = ["dependencies", "optional-dependencies"]
 
+[tool.setuptools]
+packages = {find = {where = ["src"]}}
+package-dir = {"" = "src"}
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 

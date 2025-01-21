@@ -21,3 +21,4 @@ uvicorn[standard]
 torchvision
 httpx
 coverage
+lightning[extra]
