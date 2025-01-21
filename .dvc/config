@@ -1,4 +1,0 @@
-[core]
-    remote = dtu_mlops_group_61
-['remote "dtu_mlops_group_61"']
-    url = gs://dtu_mlops_group_61/
