@@ -2,6 +2,7 @@ import os
 from typing import Optional
 from fastapi import FastAPI
 from src.models.model import Model
+from fastapi import HTTPException
 import typer
 
 app = FastAPI()
@@ -46,14 +47,23 @@ def translate(input: str = "Hello world"):
     """
     Translate the input string from English to German using the loaded model.
     """
+    global model
     if model is None:
-        raise RuntimeError("Model is not loaded. Please load the model before making a request.")
-    prediction = model.forward(
-        input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
-        attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
-    )
+        try:
+            from src.models.model import Model
+            model = load_model()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to load the model: {str(e)}")
+    
+    try:
+        prediction = model.forward(
+            input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
+            attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
+    
     return {"en": input, "de translation": prediction[0]}
-
 
 @cli.command()
 def main(api: bool = False, input: Optional[str] = None):
