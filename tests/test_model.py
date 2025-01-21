@@ -8,7 +8,7 @@ from transformers import T5Tokenizer
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.models.model import Model
-from src.models.predict_model import predict
+from src.models.predict_model import main
 
 def test_model_is_torch():
     model = Model()
