@@ -44,25 +44,27 @@ def load_model():
 
 @app.get("/translate/{input}")
 def translate(input: str = "Hello world"):
-    """
-    Translate the input string from English to German using the loaded model.
-    """
     global model
     if model is None:
         try:
-            from src.models.model import Model
             model = load_model()
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to load the model: {str(e)}")
-    
+
     try:
+        # Debugging input and tokenized output
+        tokenized = model.tokenizer(input, return_tensors="pt")
+        print(f"Tokenized Input: {tokenized}")
+
+        # Debugging prediction output
         prediction = model.forward(
-            input_ids=model.tokenizer(input, return_tensors="pt").input_ids,
-            attention_mask=model.tokenizer(input, return_tensors="pt").attention_mask,
+            input_ids=tokenized.input_ids,
+            attention_mask=tokenized.attention_mask
         )
+        print(f"Model Prediction: {prediction}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Translation failed: {str(e)}")
-    
+
     return {"en": input, "de translation": prediction[0]}
 
 @cli.command()
