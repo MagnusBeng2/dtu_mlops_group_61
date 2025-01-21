@@ -109,7 +109,7 @@ def test_training_loop():
         max_epochs=40,
         overfit_batches=1,
         log_every_n_steps=1,
-        device="cpu",
+        accelerator="cpu",
     )
     trainer.fit(model, dataloader)
     assert trainer.logged_metrics["train_loss"].item() < 0.1
