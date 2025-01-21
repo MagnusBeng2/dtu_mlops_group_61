@@ -20,3 +20,4 @@ requests
 uvicorn[standard]
 torchvision
 httpx
+coverage
