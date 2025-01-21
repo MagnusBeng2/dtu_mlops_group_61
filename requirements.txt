@@ -18,3 +18,5 @@ pre-commit
 fastapi
 requests
 uvicorn[standard]
+torchvision
+httpx
