@@ -29,9 +29,15 @@ jobs:
         pip install -r requirements.txt
         pip install -r .github/workflows/requirements_tests.txt
 
-    - name: Set PYTHONPATH
-      env:
-        PYTHONPATH: ${{ env.PYTHONPATH }}:${{ github.workspace }}/src
+    - name: Set PYTHONPATH for Windows
+      if: runner.os == 'Windows'
+      run: |
+        set PYTHONPATH=%PYTHONPATH%;%GITHUB_WORKSPACE%\src
+
+    - name: Set PYTHONPATH for Unix-based systems
+      if: runner.os != 'Windows'
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/src
 
     - name: Test with pytest
       run: |
