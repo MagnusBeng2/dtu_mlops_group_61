@@ -13,8 +13,9 @@ import torch
 import wandb
 from datasets import load_from_disk
 from pytorch_lightning.callbacks import ModelCheckpoint
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, DistributedSampler
 from src.models.model import Model
+from torch.utils.data import RandomSampler
 
 # Warnings disabled
 warnings.filterwarnings("ignore", message="Can't initialize NVML")
@@ -29,7 +30,6 @@ def set_seed(seed: int):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-# Get correct version directory
 def get_next_version(base_dir="lightning_logs"):
     if not os.path.exists(base_dir):
         os.makedirs(base_dir)
@@ -47,6 +47,13 @@ def train(args):
     # Initialize W&B
     if args.wandbkey:
         wandb.login(key=args.wandbkey)
+
+    # Detect distributed training via torchrun
+    is_distributed = "LOCAL_RANK" in os.environ
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if is_distributed:
+        torch.distributed.init_process_group(backend="nccl" if torch.cuda.is_available() else "gloo")
+        torch.cuda.set_device(local_rank)
 
     # If wandb.config is active, use it for hyperparameters; otherwise, use args
     wandb.init(
@@ -83,11 +90,25 @@ def train(args):
     print(f"Training dataset size: {len(trainset)}")
     print(f"Validation dataset size: {len(valset)}")
 
-    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=12, shuffle=True)
-    testloader = DataLoader(valset, batch_size=batch_size, num_workers=0)
+    # Define Distributed Sampler
+    train_sampler = DistributedSampler(trainset) if is_distributed else RandomSampler(trainset)
+    val_sampler = DistributedSampler(valset) if is_distributed else None
+
+    trainloader = DataLoader(
+        trainset,
+        batch_size=batch_size,
+        num_workers=12,
+        sampler=train_sampler,
+    )
+    testloader = DataLoader(
+        valset,
+        batch_size=batch_size,
+        num_workers=4,
+        sampler=val_sampler,
+    )
 
     # Initialize the model
-    model = Model(lr=lr, batch_size=batch_size).to("cuda" if torch.cuda.is_available() else "cpu")
+    model = Model(lr=lr, batch_size=batch_size)
 
     # Configure W&B logger
     logger = pl.loggers.WandbLogger(
@@ -97,7 +118,7 @@ def train(args):
     wandb.watch(model, log_freq=100)
 
     # Setup checkpointing
-    checkpoint_dir = os.path.join("lightning_logs", "checkpoints")
+    checkpoint_dir = os.path.join(get_next_version(), "checkpoints")
     os.makedirs(checkpoint_dir, exist_ok=True)
     checkpoint_callback = ModelCheckpoint(
         dirpath=checkpoint_dir,
@@ -107,17 +128,22 @@ def train(args):
         mode="min",
     )
 
+    print(f"ModelCheckpoint dirpath: {checkpoint_callback.dirpath}")
+    print(f"Logger save_dir: {logger.save_dir if hasattr(logger, 'save_dir') else 'Logger save_dir not set'}")
+
     # Initialize Trainer
     trainer = pl.Trainer(
+        default_root_dir="lightning_logs",
         max_epochs=epochs,
-        limit_train_batches=0.1 if debug_mode else 1.0,  # Use full dataset unless debug mode is active
+        limit_train_batches=0.1 if debug_mode else 1.0,
         limit_val_batches=0.1 if debug_mode else 1.0,
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
-        devices=1,
+        devices=args.gpus if args.gpus > 1 else 1,
+        strategy="ddp" if is_distributed else "auto",
         logger=logger,
         precision=32,
         callbacks=[checkpoint_callback],
-        num_sanity_val_steps=0,  # Disable sanity check
+        num_sanity_val_steps=0,
     )
 
     # Train the model
@@ -126,12 +152,13 @@ def train(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate")
+    parser.add_argument("--lr", default=0.01, type=float, help="Learning rate")
     parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
-    parser.add_argument("--batch_size", default=12, type=int, help="Batch size")
+    parser.add_argument("--batch_size", default=16, type=int, help="Batch size")
     parser.add_argument("--seed", default=42, type=int, help="Random seed")
     parser.add_argument("--wandbkey", default=None, type=str, help="W&B API key")
     parser.add_argument("--debug_mode", action="store_true", help="Run only a fraction of the dataset for quick testing")
+    parser.add_argument("--gpus", default=0, type=int, help="Number of GPUs to use")
 
     args = parser.parse_args()
     train(args)
