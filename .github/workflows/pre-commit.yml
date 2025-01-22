@@ -20,3 +20,10 @@ jobs:
 
     - name: Run Pre-commit
       uses: pre-commit/action@v3.0.1
+
+
+    - name: Commit changes made by pre-commit
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git commit -am "Fix formatting issues by pre-commit" || echo "No changes to commit"

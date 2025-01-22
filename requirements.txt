@@ -22,3 +22,5 @@ torchvision
 httpx
 coverage
 lightning[extra]
+dvc
+dvc-gs
