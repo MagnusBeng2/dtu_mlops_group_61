@@ -107,3 +107,5 @@ profiling/*
 /data/*
 !/data/.gitkeep
 /data
+
+lightning_logs/
