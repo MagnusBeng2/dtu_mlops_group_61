@@ -37,7 +37,7 @@ line-length = 120
 select = ["I"]
 
 [tool.coverage.run]
-omit = ["tests/*"]
+omit = ["tests/*", "/tmp/*", "*/_remote_module_non_scriptable.py"]
 
 [project.scripts]
 data = "src.data.data:download_and_reduce_wmt19"
