@@ -87,7 +87,7 @@ def train(args):
     testloader = DataLoader(valset, batch_size=batch_size, num_workers=0)
 
     # Initialize the model
-    model = Model(lr=lr, batch_size=batch_size)
+    model = Model(lr=lr, batch_size=batch_size).to("cuda" if torch.cuda.is_available() else "cpu")
 
     # Configure W&B logger
     logger = pl.loggers.WandbLogger(
