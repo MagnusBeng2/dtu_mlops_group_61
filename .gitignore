@@ -109,3 +109,4 @@ profiling/*
 /data
 
 lightning_logs/
+report.html
