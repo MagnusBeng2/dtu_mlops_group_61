@@ -1,6 +1,254 @@
 outs:
 - hash: md5
   path: data
-  md5: 84ced1820fdbc3f6ebf2dd8d56170f73.dir
-  size: 7885148531
-  nfiles: 35
+  files:
+  - relpath: processed/train/data-00000-of-00001.arrow
+    md5: fb953c6243abedd87157d058984d43df
+    size: 203840
+    cloud:
+      gcs_bucket:
+        etag: 08e6da9fb3f6888b031001
+        version_id: '1737535032651110'
+  - relpath: processed/train/dataset_info.json
+    md5: af7cecbebf635fc6e99906b876583921
+    size: 4311
+    cloud:
+      gcs_bucket:
+        etag: 08e8fb98b3f6888b031001
+        version_id: '1737535032540648'
+  - relpath: processed/train/state.json
+    md5: 860a8c9025b75f22eee2437dade2a545
+    size: 306
+    cloud:
+      gcs_bucket:
+        etag: 08afda92b3f6888b031001
+        version_id: '1737535032438063'
+  - relpath: processed/validation/data-00000-of-00001.arrow
+    md5: 88f30c229a4353af928e4be9b2f44384
+    size: 194872
+    cloud:
+      gcs_bucket:
+        etag: 08afcf94b3f6888b031001
+        version_id: '1737535032469423'
+  - relpath: processed/validation/dataset_info.json
+    md5: af7cecbebf635fc6e99906b876583921
+    size: 4311
+    cloud:
+      gcs_bucket:
+        etag: 08fcf398b3f6888b031001
+        version_id: '1737535032539644'
+  - relpath: processed/validation/state.json
+    md5: db40fd12c564781b1fe5422f98167c23
+    size: 311
+    cloud:
+      gcs_bucket:
+        etag: 08e5838eb3f6888b031001
+        version_id: '1737535032361445'
+  - relpath:
+      raw/_mnt_c_Users_mabbi_Desktop_dtu_mlops_group_61_data_raw_wmt19_de-en_0.0.0_c8a87a86736e7bf10c74c22e9033eba9146774e9.lock
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gcs_bucket:
+        etag: 08a3b480b3f6888b031001
+        version_id: '1737535032138275'
+  - relpath: raw/reduced_50000/train.arrow/data-00000-of-00001.arrow
+    md5: df435bc0729dcb8e5ed5bc49d3c68c47
+    size: 16347752
+    cloud:
+      gcs_bucket:
+        etag: 08fefdebb9f6888b031001
+        version_id: '1737535046483710'
+  - relpath: raw/reduced_50000/train.arrow/dataset_info.json
+    md5: 1cfe01d2a3a2a6ad659012f8b55904fc
+    size: 3917
+    cloud:
+      gcs_bucket:
+        etag: 08a9a192b3f6888b031001
+        version_id: '1737535032430761'
+  - relpath: raw/reduced_50000/train.arrow/state.json
+    md5: 6181e38975ee05dbfb5a25485e09ea83
+    size: 250
+    cloud:
+      gcs_bucket:
+        etag: 08e3b591b3f6888b031001
+        version_id: '1737535032416995'
+  - relpath: raw/reduced_50000/validation.arrow/data-00000-of-00001.arrow
+    md5: 17ea8b5d55261f7efe9cadbc3839a7b0
+    size: 758840
+    cloud:
+      gcs_bucket:
+        etag: 08c4c1a1b3f6888b031001
+        version_id: '1737535032680644'
+  - relpath: raw/reduced_50000/validation.arrow/dataset_info.json
+    md5: 1cfe01d2a3a2a6ad659012f8b55904fc
+    size: 3917
+    cloud:
+      gcs_bucket:
+        etag: 08a8f390b3f6888b031001
+        version_id: '1737535032408488'
+  - relpath: raw/reduced_50000/validation.arrow/state.json
+    md5: bd8e2b1f0f31ed4f54cf9f4bf92bb4c5
+    size: 255
+    cloud:
+      gcs_bucket:
+        etag: 08d9f090b3f6888b031001
+        version_id: '1737535032408153'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9.incomplete_info.lock
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gcs_bucket:
+        etag: 08f3aa90b3f6888b031001
+        version_id: '1737535032399219'
+  - relpath: raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/dataset_info.json
+    md5: ff5a44013df9af836175400d6e74ff30
+    size: 3225
+    cloud:
+      gcs_bucket:
+        etag: 08d28a91b3f6888b031001
+        version_id: '1737535032411474'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00000-of-00016.arrow
+    md5: 2ebe4e325629412242231455363fa566
+    size: 500533232
+    cloud:
+      gcs_bucket:
+        etag: 08c9aaaeb9f7888b031001
+        version_id: '1737535313909065'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00001-of-00016.arrow
+    md5: dad6149d6b1253760ba337a146955348
+    size: 500872344
+    cloud:
+      gcs_bucket:
+        etag: 08eca9c4b8f7888b031001
+        version_id: '1737535312172268'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00002-of-00016.arrow
+    md5: 39ffba0da50db7ae44d5a2a60113cb18
+    size: 501048496
+    cloud:
+      gcs_bucket:
+        etag: 08cef2cab2f7888b031001
+        version_id: '1737535299696974'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00003-of-00016.arrow
+    md5: f43c41a32d775df99ac0057c63d78d15
+    size: 500661920
+    cloud:
+      gcs_bucket:
+        etag: 088083c6b8f7888b031001
+        version_id: '1737535312200064'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00004-of-00016.arrow
+    md5: 6e3c8e5ca626890ce4cc5283e03929ff
+    size: 500814464
+    cloud:
+      gcs_bucket:
+        etag: 08add9e4b7f7888b031001
+        version_id: '1737535310605485'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00005-of-00016.arrow
+    md5: 5f4d0ea2b0d7e90aea45d15056683e4c
+    size: 500755664
+    cloud:
+      gcs_bucket:
+        etag: 0887f0aab9f7888b031001
+        version_id: '1737535313852423'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00006-of-00016.arrow
+    md5: 855d5fc16aa0234b6087ee466ba9170b
+    size: 500824752
+    cloud:
+      gcs_bucket:
+        etag: 08c6d7f4aff7888b031001
+        version_id: '1737535294090182'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00007-of-00016.arrow
+    md5: a5bd823f04f82a4fdfbef2e4263aa965
+    size: 500666256
+    cloud:
+      gcs_bucket:
+        etag: 08eba8ccb7f7888b031001
+        version_id: '1737535310206059'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00008-of-00016.arrow
+    md5: bc97f83bc8eb99a22133f4797edf03e8
+    size: 500710968
+    cloud:
+      gcs_bucket:
+        etag: 08cde6a9b3f7888b031001
+        version_id: '1737535301251917'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00009-of-00016.arrow
+    md5: 9be701d2d98ae9f3d58b737b10c58437
+    size: 500949960
+    cloud:
+      gcs_bucket:
+        etag: 0892ef99b3f7888b031001
+        version_id: '1737535300990866'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00010-of-00016.arrow
+    md5: bb185b327d29fdeda5cd4a63fefed787
+    size: 500713160
+    cloud:
+      gcs_bucket:
+        etag: 08b3adb3b2f7888b031001
+        version_id: '1737535299311283'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00011-of-00016.arrow
+    md5: 95590ecd3d904a5dd3b443ca92f9d62d
+    size: 500529280
+    cloud:
+      gcs_bucket:
+        etag: 089285d2b7f7888b031001
+        version_id: '1737535310299794'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00012-of-00016.arrow
+    md5: d27a261300eb9f3a55d5e271135bf7b7
+    size: 500814120
+    cloud:
+      gcs_bucket:
+        etag: 08ddf4ceb9f7888b031001
+        version_id: '1737535314442845'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00013-of-00016.arrow
+    md5: 88a8985ebf57482c686ed5957b603e5b
+    size: 500684648
+    cloud:
+      gcs_bucket:
+        etag: 088d9d8db7f7888b031001
+        version_id: '1737535309172365'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00014-of-00016.arrow
+    md5: a3a5aea3a1c2594f8df2f1e7388977f8
+    size: 500942048
+    cloud:
+      gcs_bucket:
+        etag: 08a3c594b6f7888b031001
+        version_id: '1737535307195043'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-train-00015-of-00016.arrow
+    md5: 69c90f194cd5e76ff79bceee9d988bb8
+    size: 143843128
+    cloud:
+      gcs_bucket:
+        etag: 08f98bb2d7f6888b031001
+        version_id: '1737535108449785'
+  - relpath:
+      raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9/wmt19-validation.arrow
+    md5: 17ea8b5d55261f7efe9cadbc3839a7b0
+    size: 758840
+    cloud:
+      gcs_bucket:
+        etag: 08f8dba1b3f6888b031001
+        version_id: '1737535032684024'
+  - relpath: raw/wmt19/de-en/0.0.0/c8a87a86736e7bf10c74c22e9033eba9146774e9_builder.lock
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gcs_bucket:
+        etag: 08c8e490b3f6888b031001
+        version_id: '1737535032406600'
