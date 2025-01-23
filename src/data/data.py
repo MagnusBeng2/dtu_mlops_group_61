@@ -10,7 +10,7 @@ def download_and_save_wmt19() -> None:
     """
     raw_dir = Path(__file__).resolve().parents[2] / "data/raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
-    save_dir = raw_dir / "complete_dataset"
+    save_dir = raw_dir / "wmt19"  # Updated to match make_dataset.py
     save_dir.mkdir(exist_ok=True)
 
     # Check if the dataset splits already exist
