@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
 from typing import Optional
@@ -8,26 +7,25 @@ from datasets import load_from_disk
 from dotenv import find_dotenv, load_dotenv
 from transformers import T5Tokenizer
 
-
 @click.command()
-@click.option("--k", default=None, type=int, help="Number of samples to include in the processed dataset")
+@click.option("-k", default=None, type=int, help="Number of samples to include in the processed dataset (default is the complete dataset)")
 def main(k: Optional[int] = None) -> None:
     """
-    Runs data processing scripts to turn raw data from /data/raw/reduced_50000 into
+    Runs data processing scripts to turn raw data from /data/raw into
     cleaned data ready to be analyzed (saved in /data/processed).
 
     Parameters
     ----------
     k : integer, optional
-        The number of datapoints to include in the processed dataset.
+        The number of datapoints to include in the processed dataset. Default is None (process the complete dataset).
 
     Raises
     ------
     ValueError
         If k is a negative integer.
     """
-    # Define default directories
-    raw_dir = Path(__file__).resolve().parents[2] / "data/raw/reduced_50000"
+    # Define directories
+    raw_dir = Path(__file__).resolve().parents[2] / "data/raw/wmt19"
     processed_dir = Path(__file__).resolve().parents[2] / "data/processed"
 
     # Validate k
@@ -35,7 +33,7 @@ def main(k: Optional[int] = None) -> None:
         raise ValueError("k must be a positive number of datapoints.")
 
     logger = logging.getLogger(__name__)
-    logger.info("Processing data from /data/raw/reduced_50000 to /data/processed...")
+    logger.info("Processing data from /data/raw to /data/processed...")
 
     # Ensure processed_dir exists
     processed_dir.mkdir(parents=True, exist_ok=True)
