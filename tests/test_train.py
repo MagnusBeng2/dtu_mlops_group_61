@@ -163,4 +163,3 @@ def test_training_loop(mock_trainer, mock_load_from_disk, mock_wandb):
     # Assertions for Trainer
     assert mock_trainer_instance.fit.called
     mock_trainer_instance.fit.assert_called_once()
-

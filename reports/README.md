@@ -56,7 +56,7 @@ be installed with `pip install click markdown`.
 >
 > Answer:
 
-214997, s215002, s216169 
+214997, s215002, s216169
 
 ### Question 3
 > **What framework did you choose to work with and did it help you complete the project?**
@@ -91,14 +91,14 @@ In this project, we made use of the [Transformers](https://github.com/huggingfac
 
 Initially, we established a new conda environment, called 'dtu_mlops_group_61', running Python 3.11. This would ensure that all users would be running on the same environment-type.
 
-In the project, we used a requirements.txt file to keep track of the necessary python packages to run the project code. Some of python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created and filled in as the project progressed. 
+In the project, we used a requirements.txt file to keep track of the necessary python packages to run the project code. Some of python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created and filled in as the project progressed.
 
 
 To get a complete copy of our development enviroment, one would have to run the following commands (assuming they have git installed):
 ```
 git clone https://github.com/MagnusBeng2/dtu_mlops_group_61.git
 cd ./dtu_mlops_exam_project
-conda create -n dtu_mlops_group_61 python=3.11 
+conda create -n dtu_mlops_group_61 python=3.11
 pip install -r requirements.txt
 dvc pull
 pip install -e .
@@ -172,14 +172,14 @@ The total code coverage of code is 93%, which includes all our source code.
 The reason for the code coverage being less than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the __init__.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
 The code coverage being 45% for predict_model.py is:
-1: the functionality for loading a checkpoint is not tested. 
+1: the functionality for loading a checkpoint is not tested.
 2. parts of the code that utilize external data files is not tested
 3. the if __name__ == '__main__' is executed outside the pytest context
 4. Command-line arguments aren't tested
 5. Error handling, logging or sanity checks or not tested
 Thus, we focused more on testing the core logic of the model.
 
-The code coverage for train_model is 
+The code coverage for train_model is
 
 
 ### Question 9
@@ -195,11 +195,11 @@ The code coverage for train_model is
 >
 > Answer:
 
-We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated rarely, but only with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling. 
+We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated rarely, but only with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling.
 
 Now, we did not for this protect have branch protection rules. In retrospect, it would probably be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests wouldn't simply override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided upon refraining from using them. All group members made the pledge to ensure to pull new updates before pushing, always ensuring up-to-date repository and no merge conflicts.
 
-That being said, it is the practice to construct branch protection rules, especially when being many developers on a project. For the future, it would be the best option to include branch protection rules in our repositories. 
+That being said, it is the practice to construct branch protection rules, especially when being many developers on a project. For the future, it would be the best option to include branch protection rules in our repositories.
 
 ### Question 10
 
@@ -262,7 +262,7 @@ For training the model, the chosen hyperparameters are by default taken from the
 
 In the script, we set the default values in the argparsers, which could be simply overwritten when running the CLI command, like:
 'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The specific arguments for train_model.py are batch_size, epochs, lr, seed (for reproducibility) and the WandB API key for the WandB project.
-. 
+.
 When training the model the hyperparameters are by default loaded from the configuration file src/models/config/default_params.yaml. It is also possible to pass a different path using the argparser. The configuration file contains the learning rate, number of epochs, the batch size of the model and a seed if reproducability is desired. The configuration file is passed to the wandb.init() function and the hyperparameters are loaded into the training script with the following code:
 
 lr = wandb.config.lr
