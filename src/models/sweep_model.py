@@ -35,7 +35,7 @@ def train(config=None):
 
         trainer = pl.Trainer(
             default_root_dir="lightning_logs",
-            limit_train_batches=0.1, 
+            limit_train_batches=0.1,
             limit_val_batches=0.1,
             max_epochs=epochs,
             accelerator="gpu" if torch.cuda.is_available() else "cpu",
