@@ -263,7 +263,7 @@ For training the model, the chosen hyperparameters are by default taken from the
 In the script, we set the default values in the argparsers, which could be simply overwritten when running the CLI command, like:
 'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The argsparser passes either the default or selected values to the wandb.init() function, whereafter the hyperparameters are loaded into the training script as follows:
 
-config = wandb.config 
+config = wandb.config
     lr = config.lr
     epochs = config.epochs
     batch_size = config.batch_size
