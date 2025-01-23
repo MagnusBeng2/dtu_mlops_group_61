@@ -8,7 +8,7 @@ from dotenv import find_dotenv, load_dotenv
 from transformers import T5Tokenizer
 
 @click.command()
-@click.option("-k", default=None, type=int, help="Number of samples to include in the processed dataset (default is the complete dataset)")
+@click.option("-k", default=None, type=int, help="Number of samples to include in the processed dataset (default: process the complete dataset)")
 def main(k: Optional[int] = None) -> None:
     """
     Runs data processing scripts to turn raw data from /data/raw into
@@ -17,7 +17,7 @@ def main(k: Optional[int] = None) -> None:
     Parameters
     ----------
     k : integer, optional
-        The number of datapoints to include in the processed dataset. Default is None (process the complete dataset).
+        The number of datapoints to include in the processed dataset. If None, the complete dataset is processed.
 
     Raises
     ------
@@ -38,12 +38,12 @@ def main(k: Optional[int] = None) -> None:
     # Ensure processed_dir exists
     processed_dir.mkdir(parents=True, exist_ok=True)
 
-    # Convert raw_dir to string for compatibility with `load_from_disk`
+    # Load raw dataset splits
     logger.info(f"Loading raw data from {raw_dir}...")
     train_data = load_from_disk(str(raw_dir / "train.arrow"))
     val_data = load_from_disk(str(raw_dir / "validation.arrow"))
 
-    # Limit the dataset size if k is specified
+    # Limit dataset size if k is specified
     if k is not None:
         logger.info(f"Sampling up to {k} datapoints from each dataset split...")
         train_data = train_data.select(range(min(len(train_data), k)))
