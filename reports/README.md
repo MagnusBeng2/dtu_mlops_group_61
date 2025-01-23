@@ -49,14 +49,14 @@ be installed with `pip install click markdown`.
 >
 > Answer:
 
-41
+61
 
 ### Question 2
 > **Enter the study number for each member in the group**
 >
 > Answer:
 
-s183319, s194345, s185231, s184399, s194333
+214997, s215002, s216169 
 
 ### Question 3
 > **What framework did you choose to work with and did it help you complete the project?**
@@ -64,12 +64,13 @@ s183319, s194345, s185231, s184399, s194333
 > Answer length: 100-200 words.
 >
 > Example:
-> *We used the third-party framework ... in our projekkkkct. We used functionality ... and functionality ... from the*
+> *We used the third-party framework ... in our project. We used functionality ... and functionality ... from the*
 > *package to do ... and ... in our project*.
->
+>s
 > Answer:
 
-In this project we utilized the [Transformers](https://github.com/huggingface/transformers) repository from the Huggingface group. This repository provides the [t5-small model](https://huggingface.co/t5-small), which is a natural language processing (NLP) model that can translate text from one language to another. In this project we have used the Trainer class in the pytorch lightning framework to train and test the t5-small model on a subset of the english/ german (en-de) subset of the [WMT19 dataset](https://huggingface.co/datasets/wmt19) (from the fourth conference on machine translation). We have used Weights and biases (`wandb`) to both handle the configuration file with the hyperparameters for the model and for logging the training and validation loss.
+In this project, we made use of the [Transformers](https://github.com/huggingface/transformers) library developed by the Huggingface team. This library includes the [t5-small model](https://huggingface.co/t5-small), a natural language processing (NLP) model designed for tasks like translating text between languages. For this project, we employed the Trainer class from the PyTorch Lightning framework to train and evaluate the t5-small model using a subset of the English/German (en-de) [WMT19 dataset](https://huggingface.co/datasets/wmt19), which originates from the Fourth Conference on Machine Translation. Additionally, we used Weights and Biases (`wandb`) to manage the configuration file containing the model's hyperparameters and to log the training and validation losses. Utilizing the obtained model and its parameters given for the best run, we were able to translate an input of English text to German.
+
 
 ## Coding environment
 
@@ -84,18 +85,23 @@ In this project we utilized the [Transformers](https://github.com/huggingface/tr
 >
 > Example:
 > *We used ... for managing our dependencies. The list of dependencies was auto-generated using ... . To get a*
-> *complete copy of our development enviroment, one would have to run the following commands*
+> *complete copy of our development environment, one would have to run the following commands*
 >
 > Answer:
 
-Packages are mananged in conda environments. The packages required can be found in the requirements.txt file which is placed in the top folder in the cookiecutter structure. In this txt file we have a complete list of all used packages and relevant versions in this project. The requirement.txt file was auto-generated using the command pipreqs. To get a complete copy of our development enviroment, one would have to run the following commands (assuming they have git and Python 3.10 installed):
+Initially, we established a new conda environment, called 'dtu_mlops_group_61', running Python 3.11. This would ensure that all users would be running on the same environment-type.
+
+In the project, we used a requirements.txt file to keep track of the necessary python packages to run the project code. Some of python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created and filled in as the project progressed. 
+
+
+To get a complete copy of our development enviroment, one would have to run the following commands (assuming they have git installed):
 ```
-git clone https://github.com/MikkelGodsk/dtu_mlops_exam_project.git
-cd dtu_mlops_exam_project
-conda create -n myenv
+git clone https://github.com/MagnusBeng2/dtu_mlops_group_61.git
+cd ./dtu_mlops_exam_project
+conda create -n dtu_mlops_group_61 python=3.11 
 pip install -r requirements.txt
 dvc pull
-python setup.py install
+pip install -e .
 ```
 
 ### Question 5
@@ -110,6 +116,7 @@ python setup.py install
 > *experiments.*
 > Answer:
 
+SKAL SKRIVES OM, IKKE VORES TEKST
 The overall structure is initialized with the cookiecutter template. In general we tried to follow the cookiecutter structure as much as possible. Since the original WMT19 dataset took up too much memory in both cloud and drive, we processed the data locally and only included a subset in the proccessed folder in the data folder. Thus we deleted the data/external/, data/interim/ and data/raw/ folders. We also deleted the folders notebooks/, references/, src/features/, src/visualization/, since we did not use these. We filled out the src/data/ folder and the src/models/ folder in which we also included a file src/models/evaluate_model.py for evaluating the model and a folder src/models/config/, with the configuration files.
 We also included the tests/ folder which holds scripts for conducting different pytests.
 
@@ -123,6 +130,7 @@ We also included the tests/ folder which holds scripts for conducting different 
 >
 > Answer:
 
+SKAL SKRIVES OM, IKKE VORES TEKST
 In this project we have used typing and written comments when the code is not completly self explanatory, in addition to function docstrings. We tried to ensure that the code is pep8 compliant. To obtain this we have used black to format the code and flake8 to check. Lastly, we used isort to sort our imports. The code quality and format is tested in github actions, hence constantly ensuring the quality. Using these methods makes it much easier to share code and ensures the readability.
 
 ## Version control
@@ -136,7 +144,7 @@ In this project we have used typing and written comments when the code is not co
 >
 > Answer:
 
-7
+5
 
 ### Question 8
 
@@ -152,21 +160,27 @@ In this project we have used typing and written comments when the code is not co
 > Answer:
 
 The total code coverage of code is 93%, which includes all our source code.
-| Name                          | STMTS | Miss | Cover | Missing        |
-|-------------------------------|-------|------|-------|----------------|
-| ./src/\_\_init\_\_.py         | 0     | 0    | 100%  | -              |
-| ./src/models/\_\_init\_\_.py  | 2     | 0    | 100%  | -              |
-| ./src/models/model.py         | 48    | 4    | 92%   | 45, 47, 49, 51 |
-| ./src/models/predict_model.py | 21    | 7    | 67%   | 21, 29-37      |
-| ./tests/\_\_init\_\_.py       | 5     | 0    | 100%  | -              |
-| ./tests/test_api.py           | 11    | 0    | 100%  | -              |
-| ./tests/test_dataset.py       | 18    | 0    | 100%  | -              |
-| ./tests/test_model.py         | 43    | 0    | 100%  | -              |
-| TOTAL                         | 148   | 11   | 93%   | -              |
+| Name                           | STMTS | Miss | Cover | Missing                               |
+|--------------------------------|-------|------|-------|---------------------------------------|
+| ./src/\_\_init\_\_.py          | 0     | 0    | 100%  | -                                     |
+| ./src/models/\_\_init\_\_.py   | 2     | 0    | 100%  | -              	                |
+| ./src/models/model.py          | 70    | 2    | 97%   | 44, 46         		        |
+| ./src/models/predict\_model.py | 55    | 30   | 45%   | 22-31, 38-45, 52-55, 68-69, 79-94, 98 |
+| ./tests/models/train\_model.py | 86    | 16   | 81%   | 35-36, 49, 55-56, 154-164, 167        |
+| TOTAL                          | 213   | 48   | 77%   | -              |
 
-The reason for the code coverage less than 100% in the file `model.py` is that we deemed some of the checks in the constructor (`__init__`) too trivial to test. These are just checking for the data type and non-negativity of learning-rate and batch size.
+The reason for the code coverage being less than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the __init__.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
-In `predict_model.py`, the reason for the coverage being less than 100% is that we do not test with loading in a checkpoint. Unless we transfered this to GitHub, it would not be able to run in actions. Lastly, we have tested the code run in the `if __name__ == '__main__':`-block. In order to do so we had to open a pipe to another cmd using `os.popen` doing so, so the code is simply not counted here.
+The code coverage being 45% for predict_model.py is:
+1: the functionality for loading a checkpoint is not tested. 
+2. parts of the code that utilize external data files is not tested
+3. the if __name__ == '__main__' is executed outside the pytest context
+4. Command-line arguments aren't tested
+5. Error handling, logging or sanity checks or not tested
+Thus, we focused more on testing the core logic of the model.
+
+The code coverage for train_model is 
+
 
 ### Question 9
 
@@ -181,7 +195,11 @@ In `predict_model.py`, the reason for the coverage being less than 100% is that 
 >
 > Answer:
 
-We added branch protection on the main branch. Hence we created a feature branch where changes were made. We then used pull requests to merge with the main branch quite often. A pull request typically only concerned a few changes in a limited amount of scripts. Hence we avoided having an unmanageable amount of branches as well as reduced the number of merge conflicts. Before merging a branch with the main branch the tests are conducted to ensure that the merge will result in a working code. Furthermore when making major changes we assured that pull request were created and reviewed immediately.
+We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated rarely, but only with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling. 
+
+Now, we did not for this protect have branch protection rules. In retrospect, it would probably be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests wouldn't simply override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided upon refraining from using them. All group members made the pledge to ensure to pull new updates before pushing, always ensuring up-to-date repository and no merge conflicts.
+
+That being said, it is the practice to construct branch protection rules, especially when being many developers on a project. For the future, it would be the best option to include branch protection rules in our repositories. 
 
 ### Question 10
 
@@ -196,6 +214,7 @@ We added branch protection on the main branch. Hence we created a feature branch
 >
 > Answer:
 
+SKAL SKRIVES OM, IKKE VORES TEKST
 The wmt19 dataset originally contained around 9GB of data. Hence we decided to create a subset of the dataset. Data version control hereby contributed to an easy update of the data. We initially created a bucket in Google Cloud and used dvc to manage this. However s194333 did not have enough credit to sustain this service hence we had to create another bucket containing the same data with a different billing account. However we also stored the data on google drive, in case we potentially would use all credits on cloud again. Hence the dvc package proved to be very usefull for switching between different data storage options. In addition, dvc was an easy update to implement on all our devices since it only required some simple terminal commands.
 
 ### Question 11
@@ -212,6 +231,7 @@ The wmt19 dataset originally contained around 9GB of data. Hence we decided to c
 >
 > Answer:
 
+SKAL SKRIVES OM, IKKE VORES TEKST
 We have organized our continues integration into three separate files: one for doing unittesting, one for running isort testing and one for running flake8. The isort test and the flake8 test are only run on the Ubuntu operating system and the python version 3.8. The unittesting is also run on the windows operating system and python version 3.10. Here we also make use of caching to speed up the process. Testing the dataset consists of loading the data and checking whether the format is correct. More precicely we check if the data (en-de) is given as a string and a label. When testing the model the following things must be satisfied
 - The model is in torch
 - The model outputs the translated sentence as a list containing a string
@@ -238,6 +258,11 @@ https://github.com/MikkelGodsk/dtu_mlops_exam_project/actions/runs/3961726045/wo
 >
 > Answer:
 
+For training the model, the chosen hyperparameters are by default taken from the python script's argparser. We found this to be easier than taking from a config file. However, we still inserted one under /src/models/config to show that it was also an option.
+
+In the script, we set the default values in the argparsers, which could be simply overwritten when running the CLI command, like:
+'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The specific arguments for train_model.py are batch_size, epochs, lr, seed (for reproducibility) and the WandB API key for the WandB project.
+. 
 When training the model the hyperparameters are by default loaded from the configuration file src/models/config/default_params.yaml. It is also possible to pass a different path using the argparser. The configuration file contains the learning rate, number of epochs, the batch size of the model and a seed if reproducability is desired. The configuration file is passed to the wandb.init() function and the hyperparameters are loaded into the training script with the following code:
 
 lr = wandb.config.lr

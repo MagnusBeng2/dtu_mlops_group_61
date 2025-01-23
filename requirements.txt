@@ -24,3 +24,5 @@ coverage
 lightning[extra]
 dvc
 dvc-gs
+pydantic
+loguru
