@@ -12,4 +12,6 @@ COPY src/ src/
 
 RUN pip install -r requirements.txt --no-cache-dir
 
+EXPOSE 8080
+
 ENTRYPOINT ["python", "-u", "src/models/evaluate_model.py"]
