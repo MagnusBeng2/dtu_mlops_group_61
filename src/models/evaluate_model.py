@@ -65,7 +65,7 @@ def evaluate(args):
     )  # Use first 50 examples
 
     # Configure the trainer
-    trainer = pl.Trainer(accelerator="gpu" if torch.cuda.is_available() else "cpu", devices=1)
+    trainer = pl.Trainer(accelerator="gpu" if torch.cuda.is_available() else "cpu")
 
     # Evaluate the model
     results = trainer.test(model=model, dataloaders=testloader, verbose=True)
