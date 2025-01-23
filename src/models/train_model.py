@@ -152,7 +152,7 @@ def train(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--lr", default=0.01, type=float, help="Learning rate")
+    parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate")
     parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
     parser.add_argument("--batch_size", default=16, type=int, help="Batch size")
     parser.add_argument("--seed", default=42, type=int, help="Random seed")
