@@ -61,11 +61,14 @@ def evaluate(args):
     # Load the test dataset
     testset = Dataset.load_from_disk("data/processed/validation")
     testloader = DataLoader(
-        testset.select(range(50)), batch_size=args.batch_size, num_workers=12
-    )  # Use first 50 examples
+    testset.select(range(50)), batch_size=args.batch_size, num_workers=12, pin_memory=torch.cuda.is_available()
+    )
 
     # Configure the trainer
     trainer = pl.Trainer(accelerator="gpu" if torch.cuda.is_available() else "cpu")
+
+    # Move model to the appropriate device
+    model = model.to("cuda" if torch.cuda.is_available() else "cpu")
 
     # Evaluate the model
     results = trainer.test(model=model, dataloaders=testloader, verbose=True)
