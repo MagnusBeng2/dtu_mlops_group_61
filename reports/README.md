@@ -130,8 +130,8 @@ We also included the tests/ folder which holds scripts for conducting different 
 >
 > Answer:
 
-SKAL SKRIVES OM, IKKE VORES TEKST
-In this project we have used typing and written comments when the code is not completly self explanatory, in addition to function docstrings. We tried to ensure that the code is pep8 compliant. To obtain this we have used black to format the code and flake8 to check. Lastly, we used isort to sort our imports. The code quality and format is tested in github actions, hence constantly ensuring the quality. Using these methods makes it much easier to share code and ensures the readability.
+Yes, in this project rules for quality and formatting was implemented using the ruff linter in our continuous integration. The ruff linter ensures compliance with PEP 8 standards, together with pre-commit hooks which automatically check and fix issues in the staged files before pushing. This includes trailing  whitespaces, missing newlines at the end of files and improperly sorted imports.
+
 
 ## Version control
 
@@ -214,6 +214,7 @@ That being said, it is definitely the practice to construct branch protection ru
 >
 > Answer:
 
+
 SKAL SKRIVES OM, IKKE VORES TEKST
 The wmt19 dataset originally contained around 9GB of data. Hence we decided to create a subset of the dataset. Data version control hereby contributed to an easy update of the data. We initially created a bucket in Google Cloud and used dvc to manage this. However s194333 did not have enough credit to sustain this service hence we had to create another bucket containing the same data with a different billing account. However we also stored the data on google drive, in case we potentially would use all credits on cloud again. Hence the dvc package proved to be very usefull for switching between different data storage options. In addition, dvc was an easy update to implement on all our devices since it only required some simple terminal commands.
 
@@ -230,6 +231,12 @@ The wmt19 dataset originally contained around 9GB of data. Hence we decided to c
 > *... . In particular for our ..., we used ... .An example of a triggered workflow can be seen here: <weblink>*
 >
 > Answer:
+
+In this project we have implemented a continuous integration setup using the actions function in github. This includes unit testing and linting, for more than one operating system. To be more specific, the tests are run on python 3.12, and all 3 operating systems linux(ubuntu), macos, and windows. Unit testing is done using pytest, ... . For linting, Ruff is used as mentioned before replacing both flake8 and isort, adhering to python standards PEP8 and handling import, sorting and replacing. In the future mypy could be added as a way to perform static type checking.
+
+Here is a link to the github actions:
+https://github.com/MagnusBeng2/dtu_mlops_group_61/actions
+
 
 SKAL SKRIVES OM, IKKE VORES TEKST
 We have organized our continues integration into three separate files: one for doing unittesting, one for running isort testing and one for running flake8. The isort test and the flake8 test are only run on the Ubuntu operating system and the python version 3.8. The unittesting is also run on the windows operating system and python version 3.10. Here we also make use of caching to speed up the process. Testing the dataset consists of loading the data and checking whether the format is correct. More precicely we check if the data (en-de) is given as a string and a label. When testing the model the following things must be satisfied
