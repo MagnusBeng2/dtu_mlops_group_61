@@ -167,9 +167,9 @@ The total code coverage of code is 93%, which includes all our source code.
 | ./src/models/model.py          | 70    | 2    | 97%   | 44, 46         		        |
 | ./src/models/predict\_model.py | 55    | 30   | 45%   | 22-31, 38-45, 52-55, 68-69, 79-94, 98 |
 | ./tests/models/train\_model.py | 86    | 16   | 81%   | 35-36, 49, 55-56, 154-164, 167        |
-| TOTAL                          | 213   | 48   | 77%   | -              |
+| TOTAL                          | 213   | 48   | 77%   |                                       |
 
-The reason for the code coverage being less than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the __init__.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
+The reason for the code coverage being just lower than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the __init__.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
 The code coverage being 45% for predict_model.py is:
 1: the functionality for loading a checkpoint is not tested.
@@ -199,7 +199,7 @@ We utilized two major branches in this project, main, which we used as the devel
 
 Now, we did not for this protect have branch protection rules. In retrospect, it would probably be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests wouldn't simply override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided upon refraining from using them. All group members made the pledge to ensure to pull new updates before pushing, always ensuring up-to-date repository and no merge conflicts.
 
-That being said, it is the practice to construct branch protection rules, especially when being many developers on a project. For the future, it would be the best option to include branch protection rules in our repositories.
+That being said, it is definitely the practice to construct branch protection rules in one's repository, especially when being many developers work on it. For the future, it would be the best option to include branch protection rules for our future repositories.
 
 ### Question 10
 
@@ -261,17 +261,19 @@ https://github.com/MikkelGodsk/dtu_mlops_exam_project/actions/runs/3961726045/wo
 For training the model, the chosen hyperparameters are by default taken from the python script's argparser. We found this to be easier than taking from a config file. However, we still inserted one under /src/models/config to show that it was also an option.
 
 In the script, we set the default values in the argparsers, which could be simply overwritten when running the CLI command, like:
-'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The specific arguments for train_model.py are batch_size, epochs, lr, seed (for reproducibility) and the WandB API key for the WandB project.
-.
-When training the model the hyperparameters are by default loaded from the configuration file src/models/config/default_params.yaml. It is also possible to pass a different path using the argparser. The configuration file contains the learning rate, number of epochs, the batch size of the model and a seed if reproducability is desired. The configuration file is passed to the wandb.init() function and the hyperparameters are loaded into the training script with the following code:
+'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The argsparser passes either the default or selected values to the wandb.init() function, whereafter the hyperparameters are loaded into the training script as follows:
 
-lr = wandb.config.lr
-epochs = wandb.config.epochs
-batch_size = wandb.config.batch_size
+config = wandb.config 
+    lr = config.lr
+    epochs = config.epochs
+    batch_size = config.batch_size
+    seed = config.seed
 
-We utilized the *sweep* functionality of `wandb` in an attempt to optimize hyperparamters. Through `wandb` the hyperparameter configuration was logged. The hyperparameters for the different experiments are then set to the hyperparameters resulting in the best validation loss.
+Moreover, we utilized the sweep functionality of WandB in sweep_model.py as to optimize hyperparameters, wherethrough the hyperparameter configuration was logged.
 
-When using the src/models/predict_model.py we use a simple argparser to give the input string to be translated along with the checkpoint file containing the trained model weights.
+As for evaluate_model.py, it also utilized the argparsing functionality, taking the inputs 'seed', 'batch_size' and 'checkpoint_dir' for evaluation.
+
+And for predict_model.py, it took an input and if the API was to be used, ultimately, translating the input into a text in German.
 
 ### Question 13
 
