@@ -25,52 +25,71 @@ By finetuning the T5-small model and employing a robust pipeline, the aim of thi
 
 
 Project Organization
-------------
+--------
+├── =4.66.3
+├── LICENSE
+├── Makefile
+├── README.md
+├── bak.setup.py
+├── cloudbuild.yaml
+├── configs
+│   └── tox.ini
+├── data
+│   ├── processed
+│   └── raw
+├── data.dvc
+├── docker.dockerfile
+├── dockerfiles
+│   ├── predict gpu.dockerfile
+│   ├── predict.dockerfile
+│   ├── trainer gpu.dockerfile
+│   └── trainer.dockerfile
+├── docs
+│   ├── Makefile
+│   ├── commands.rst
+│   ├── conf.py
+│   ├── getting-started.rst
+│   ├── index.rst
+│   └── make.bat
+├── environment.yml
+├── lightning_logs
+│   ├── version_0
+│   ├── version_1
+│   ├── version_2
+│   └── version_3
+├── models
+│   └── models--t5-small
+├── profiling
+│   └── profile.prof
+├── pyproject.toml
+├── reports
+│   ├── README.md
+│   ├── figures
+│   ├── report.html
+│   └── report.py
+├── requirements.txt
+├── src
+│   ├── _init_.py
+│   ├── _pycache_
+│   ├── data
+│   └── models
+├── test_environment.py
+├── tests
+│   ├── _init_.py
+│   ├── test_api.py
+│   ├── test_dataset.py
+│   ├── test_model.py
+│   └── test_train.py
+├── tree_structure.txt
+└── wandb
+    ├── debug-internal.log -> run-20250124_121336-lq1ocjfa/logs/debug-internal.log
+    ├── debug.log -> run-20250124_121336-lq1ocjfa/logs/debug.log
+    ├── latest-run -> run-20250124_121336-lq1ocjfa
+    ├── run-20250124_102350-yac34mme
+    ├── run-20250124_102444-pzuh92ay
+    ├── run-20250124_103706-3kpsaxyf
+    ├── run-20250124_104750-i9jh5y1k
+    └── run-20250124_121336-lq1ocjfa
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
-
+29 directories, 36 files
 --------
