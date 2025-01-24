@@ -573,7 +573,7 @@ Peter A. Gründer s214987:
 - DVC
 
 Alex J. Hagedorn s215002:
-- Establishing and writing workflows 
+- Establishing and writing workflows
 - Pre-commits
 - Continuous integration
 - Ensuring workflows worked correctly in Github
