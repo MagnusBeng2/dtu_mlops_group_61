@@ -91,7 +91,7 @@ In this project, we made use of the [Transformers](https://github.com/huggingfac
 
 Initially, we established a new conda environment, called 'dtu_mlops_group_61', running Python 3.12. This would ensure that all developers would be running on the same environment-type.
 
-In the project, we used a requirements.txt as well as the pyproject.toml file to keep track of the necessary Python packages and environment to run the project code. Some Python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created using pipreqs and updated regularly manually as the project progressed.vb
+In the project, we used a requirements.txt as well as the pyproject.toml file to keep track of the necessary Python packages and environments to run the project code. Some Python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created using pipreqs and was manually updated regularly as the project progressed.
 
 
 To get a complete copy of our development enviroment, one would have to run the following commands (assuming they have git installed):
@@ -130,7 +130,7 @@ We also included the tests/ folder which holds scripts for conducting different 
 >
 > Answer:
 
-Yes, in this project rules for quality and formatting were implemented using the Ruff linter in our continuous integration. This ensures compliance with PEP 8 standards, together with pre-commit hooks that automatically check and fix issues in the staged files before pushing. This includes trailing, whitespaces, missing newlines at the end of files and improperly sorted imports.
+Yes, for this project we established rules for quality and formatting, which was enforded by the Ruff linter in our continuous integration. Together with having a pre-commit continuous integration, this ensured compliance with the PEP8 standards. The pre-commit would specifically work by fixing trailing, whitespaces, missing newlines and improperly sorted imports before commits was conducted to the Git repository.
 
 
 ## Version control
@@ -173,6 +173,16 @@ We implemented 11 tests that were run successfully:
 >
 > Answer:
 
+Name                          Stmts   Miss  Cover   Missing
+-----------------------------------------------------------
+src/__init__.py                   0      0   100%
+src/models/__init__.py            2      0   100%
+src/models/model.py              70      2    97%   44, 46
+src/models/predict_model.py      55     30    45%   22-31, 38-45, 52-55, 68-69, 79-94, 98
+src/models/train_model.py        86     16    81%   35-36, 49, 55-56, 154-164, 167
+-----------------------------------------------------------
+TOTAL                           213     48    77%
+
 The code coverage is just below 100% for the model.py script. Lines 44 and 46 are related to edge-case checks in the _init_.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
 The code coverage is 45% for predict_model.py. Test focus on testing the core logic of the model. Following elements of the script are not tested:
@@ -200,9 +210,9 @@ The code coverage for train_model is 81%. Error handling and logging mechanisms 
 
 We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling.
 
-For this project, we did not implement branch protection rules. In retrospect, it would be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests do not override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided not using them. All group members made the pledge to ensure to pull new updates before pushing, ensuring an up-to-date local repository and no merge conflicts.
+For this project, we did not implement branch protection rules. In retrospect, it would have been most advantageous to establish branch protection rules inside the GitHub repository, making sure that push and merge requests did not override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided not using them. All group members made the pledge to ensure to pull new updates before pushing, ensuring an up-to-date local repository and no merge conflicts.
 
-That being said, it is definitely best practice to construct branch protection rules in one's repository, especially when many developers work on it. For future projects, it would be best to include branch protection rules early on.
+That being said, it is definitely the best practice to construct branch protection rules in one's repository, especially when many developers work on it. For future projects, it would be best to include branch protection rules early on.
 
 ### Question 10
 
@@ -217,7 +227,7 @@ That being said, it is definitely best practice to construct branch protection r
 >
 > Answer:
 
-DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our data was static, the primary reason for using DVC was to pull preprocessed data files to local and remote machines for faster repository deployment. Throughout the project lifecycle we used a couple of different version of our data files, consisting of different amounts of preprocessed data. The latest version contains the complete preprocessed WMD19 dataset for finetuning on the GPU assisted Cloud Compute environment.
+DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our data was static, the primary reason for using DVC was to pull preprocessed data files to local and remote machines for faster repository deployment. Throughout the project lifecycle, we used a couple of different version of our data files, consisting of different amounts of preprocessed data. The latest version contains the complete preprocessed WMD19 dataset for finetuning on the GPU assisted Cloud Compute environment.
 
 ### Question 11
 
@@ -233,7 +243,7 @@ DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our d
 >
 > Answer:
 
-We have implemented a continuous integration setup using the Actions Function in Github. This includes unit testing and linting, for more than one operating system. Specificly, the tests are run on Python 3.12, and 3 operating systems Linux (Ubuntu), MacOS, and Windows. Unit testing is done using Pytest. For linting, Ruff is used as mentioned before replacing both Flake8 and iSort, adhering to Python standards PEP8 and handling import, sorting and replacing. In the future MyPy could be added as a way to perform static type checking.
+We implemented a continuous integration setup using the Actions Function in Github. This included unit testing and linting, which was operable for multiple operating systems. Specifically, the tests were run on Python 3.12 and on Linux (Ubuntu), MacOS, and Windows. Unit testing was done using Pytest. For linting, Ruff was used, as mentioned before, which incorporated both Flake8 and iSort, adhering to Python standards PEP8 and handling import, sorting and replacing. In the future, MyPy could be added as a method to perform static type checking.
 
 Here is a link to the Github actions:
 https://github.com/MagnusBeng2/dtu_mlops_group_61/actions
@@ -255,9 +265,9 @@ https://github.com/MagnusBeng2/dtu_mlops_group_61/actions
 >
 > Answer:
 
-For training the model, the chosen hyperparameters are by default taken from the Python script's Argparser. We found this to be easier than taking from a config file. A config file can be found under /src/models/config.
+For training the model, the chosen hyperparameters were by default taken from the Python script's Argparser. We found this to be easier than taking from a config file. Config files could be found under /src/models/config.
 
-In the script, we set the default values in the argparsers, which can be overwritten when running the command: 'python ./src/models/train_model.py' --epochs 10 --lr 0.01', which configures the script to run with 10 epochs and a learning rate of 0.01. The argsparser passes either the default or selected values to the wandb.init() function, whereafter the hyperparameters are loaded into the training script as follows:
+In the script, we set the default values in the argparsers, which could be overwritten when running the command: 'python ./src/models/train_model.py' --epochs 10 --lr 0.01'. This command line would configure the script to run with 10 epochs and a learning rate of 0.01 instead of the default values. The argsparser passed either the default or selected values to the wandb.init() function, whereafter the hyperparameters were loaded into the training script as follows:
 
 config = wandb.config
     lr = config.lr
@@ -285,8 +295,8 @@ And for predict_model.py, it took an input and if the API was to be used, transl
 > Answer:
 
 
-**SKAL SKRIVES OM**
-When we load the config file the hyperparameters of the model is set to the values provided in the file. Hence one can easily see which parameters are used to train. However, when conducting experiments it is important to track which parameters are used. By ensuring commits between changes in config file we make sure that experiments are logged in the git commit history. In order to reproduce the experiments we included a seed in the configuration file. Hereby we ensure that the exact same results are obtained when training a model with a specific set of hyperparameters. Furthermore we created docker images, which ensures that our models can be run on all computers. By running multiple experiments in W&B we ensure that hyperparameters are kept in W&B.
+In order to secure information and uphold reproducibility, both train_model.py and evaluate_model.py allowed for setting a seed before operation, ensuring same results could be obtained on two different devices and two different runs. Specifically, the two scripts would always take the default seed-value of 42, as is stated in the config. Additionally, we established docker images, which would ensure that models in the project could be identically run on all devices. And by logging the runs and their performances, we could inspect them side-by-side in WandB and confirm/disprove runs were in fact identical.
+
 
 ### Question 14
 
@@ -303,24 +313,25 @@ When we load the config file the hyperparameters of the model is set to the valu
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-In W&B we track the training loss as seen on the figure below.
+By logging the data in WandB, we were able to track the training loss for every run of train_model.py. Below is shown a training curve for a given run:
 
 ![Training loss](figures/train_loss.png)
 
-We see a small descrease of the loss. This metric is essential for showing whether the model is learning from the data during the training.
+Even though this specific run was run a small subset of the data, it is still clear that as the epochs progress, the training loss decreased.
 
-We also track the validation loss as seen on the figure below.
+In addition, we could also track the validation curve:
 
-![Validation loss](figures/v al_loss.png)
+![Validation loss](figures/val_loss.png)
 
-The validation loss is very important to monitor the models performance when presented to unknown data.
+For the same run, it is clear that the model (in this run) exhibits some major overfitting, as the training and validation curve diverged from each other.
 
-We also perform a sweep in an attempt to optimize hyperparamters based on obtaining the lowest possible validation loss.
+Utilizing logging, it would be possible for further studies to study and tinker with the parameters in the model, ultimately, achieving a satisfactory result.
+
+Furthermore, our sweep_model.py allowed for conducting sweeps of the train_model.py, enabling a search for the best parameters.
+
+In this simple sweep of the model and with 3 different learning rates, it was possible to deduct a learning rate that would give the lowest validation loss.
 
 ![Sweep hyperparameters](figures/hyperparams.png)
-
-This did however show us that with the best hyperparameterse the validation loss remains constant.
 
 ### Question 15
 
@@ -354,9 +365,9 @@ docker run -p 8080:8080 inference:latest
 >
 > Answer:
 
-When we executed the code locally for testing, we typically used the --debug_mode as command option, meaning the datasize would be shrunk to 10% of the original size. When the code would produce errors when being run, we would debug either using Copilot or ChatGPT for error fixes and recommendations. Furthermore, we would typically also insert simple print statements, e.g., to check the size of tensors.
+When we executed the code locally for testing, we typically used the --debug_mode as a command option, meaning the datasize would be shrunk to 10% of the original size. When the code would produce errors in the terminal and not run, we would debug either using Copilot or ChatGPT to obtain fixes and recommendations. Furthermore, we would typically also insert simple print statements into the cpde, e.g., to check the size of tensors.
 
-When we got it to run locally, first then could we begin to export the functionality to Google Cloud.
+When we were able to run the code locally, first then could we begin to export the functionality to the GCP.
 
 For profiling, we utilized the in-built tool from Pytorch Lightning to profile the training. However, we did not improve the coding based on the profiling, as we found it adequate in this project to just illustrate that profiling was possible. Nonetheless, the profiling did point us in directions on how to improve the code.
 
@@ -406,7 +417,7 @@ The training was conducted in the Compute Engine using a Nvidia T5 GPU. The repo
 >
 > Answer:
 
-During the project we made extensive use of the Compute Engine for training and infering our model, yielding promising results for translation. The setup was simple: the remote machine was initialized with the | "pytorch-latest-cpu" image and the Nvidia T5 GPU. Our repository was transferred and kept up-to-date using Git. Training and inference was completed for parts of the data set. Two difficulties were experienced during use: (1) At multiple occasion, the SSH connection was lost. This would regularly happen at the 1h mark, however, changing session timeout settings did not help resolve this issue. This issue could be resolved using tmux in future session. (2) We did not implement a process for exporting trained weights and biases.
+During the project, we made extensive use of the Compute Engine for training and infering our model, yielding promising results for translation. The setup was simple: the remote machine was initialized with the | "pytorch-latest-cpu" image and the Nvidia T5 GPU. Our repository was transferred and kept up-to-date using Git. Training and inference was completed for parts of the data set. Two difficulties were experienced during use: (1) At multiple occasion, the SSH connection was lost. This would regularly happen at the 1h mark, however, changing session timeout settings did not help resolve this issue. This issue could be resolved using tmux in future session. (2) We did not implement a process for exporting trained weights and biases.
 
 ### Question 19
 
@@ -415,7 +426,7 @@ During the project we made extensive use of the Compute Engine for training and 
 >
 > Answer:
 
-Our bucket consists of the complet WMT19 data set, as well as 200,000 preprocessed samples.
+Our bucket consisted of the complete WMT19 data set, as well as 200,000 preprocessed samples.
 
 ![my_image](figures/ourbucket.png)
 
@@ -426,7 +437,7 @@ Our bucket consists of the complet WMT19 data set, as well as 200,000 preprocess
 >
 > Answer:
 
-The GCP Artefact Registry consists of the inference-image that was automatically created using the docker.dockerfile connected to our repository. We are not able to access the Artefact Registry at this point because the billing account associated with the project has run out of credits. I tried associating both (!) my credit cards to a new billing account to access the Artefact Registry but both were declined.
+The GCP Artifact Registry consisted of the inference-image that was automatically created using the docker.dockerfile connected to our repository. We were not able to access the Artifact Registry at this point because the billing account associated with the project ran out of credits. We tried associating two credit cards to a new billing account to access the Artefact Registry but both were declined.
 
 ![GCP Registry](figures/nope.png)
 
@@ -454,7 +465,7 @@ The GCP Artefact Registry consists of the inference-image that was automatically
 >
 > Answer:
 
-We were able to deploy our model locally using a FastAPI and Uvicorn framwork. Inference worked with little delay compared to directly accessing the inference function. The framework for deploying the model in the cloud was to (1) define an inference model using an ONNX framwork, (2) creating an inference docker environment using the Artefact Registry, (3) use Google Cloud Run to create a scalable and efficient HTTP endpoint for serving requests.
+We were able to deploy our model locally using a FastAPI and Uvicorn framwork. Inference worked with a small delay compared to directly accessing the inference function. The framework for deploying the model in the cloud was to (1) define an inference model using an ONNX framwork, (2) creating an inference docker environment using the Artifact Registry, (3) use Google Cloud Run to create a scalable and efficient HTTP endpoint for serving requests.
 
 We skipped the definition of our inference step as an ONNX model and went directly to deploying the model in the cloud. The docker was successfully created and run both locally and in the cloud, however, the credits ran out before we could debug the HTTP endpoint in Google Run.
 
@@ -475,7 +486,7 @@ curl -X GET "http://localhost:8080/translate/Hello%20world"
 >
 > Answer:
 
-We did not manage to implement monitoring in this project. We would like to have implented cloud monitoring of our deployed model, so that we could measure the model performance and make sure it runs as expected over time. This tracking could include metrics like accuracy and precission, or f1 score to possibly detect model performance decrease. Moreover, because we have a translation model, and if it starts producing incorrect outputs more frequently, it could indicate data drifting which these models are higly susceptible to.
+We did not manage to implement monitoring in this project. We would like to have implented cloud monitoring of our deployed model, allowing for measuring the model performance and thus, we could make sure it operated as expected over time. This tracking could include metrics like accuracy and precission, or f1 score to possibly detect model performance decrease. Moreover, because we worked with a translation model, and if it was to begin producing incorrect outputs more frequently, it could indicate data drifting which translating model are, in general, higly susceptible to.
 
 ### Question 24
 
@@ -489,7 +500,7 @@ We did not manage to implement monitoring in this project. We would like to have
 >
 > Answer:
 
-We used $50,03, the complete credits from one group member. The credits ran out on the last day. Of the $50, $49,30	were used on the Compute Engine. The multiple failed attempts (due to disconnection) had a significant cost as time was spent reconnecting and redoing computations.
+We used $50,03, the complete credits from one group member. The credits ran out on the last day. Of the $50, $49,30	were used on the Compute Engine. The multiple failed attempts (due to disconnections) had a significant cost as time was spent reconnecting and redoing computations.
 
 ## Overall discussion of project
 
@@ -529,11 +540,11 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
-The project lifecycle was marked by many small mistakes (and learnings). Most of the group members had little experience in GitHub. This resulted for example in diverting version branches, which needed to be solved continually using git merge and git rebase. As the project scope grew, compliance with good practice project structure was neglected. The project in its current state has many features, but has little in common with the initial cookiecutter template. However, features are working and this problem could be resolved somewhat fast.
+The project lifecycle was marked by many small mistakes (and learnings). Most of the group members had little experience in GitHub. This resulted in, e.g., diverting version branches, which needed to be solved, which would be solved by using merge and git rebase. As the project scope grew, compliance with good practice project structure was neglected. The project in its current state had many features, but had little in common with the initial cookiecutter template. However, features were working and this problem could be resolved somewhat fast.
 
-Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. A significant amount of time was spent getting the different Python scripts inside of src/models running and making it fit to the processed data. As more features were introduced, such as logging and Wanddb, the experience was made that adding features often causes problems for others, highlighting the importance of best practice version control.
+Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. A significant amount of time was spent getting the different Python scripts inside of src/models running and making it fit to the processed data. As more features were introduced, such as logging and Wandb, it highlighted the importance of utlizing the practice of version control.
 
-Deploying the model to the cloud was another challenge. This included: (1) understanding the GCS environment and navigating the GUI, (2) understanding the functionality and interconnection between the different services, (3) creating a deployable repository that supports the Google Cloud Services and finally (4) successfully deploying the model, while adhering to continous integration best practices.
+Another challenge was definitely to deploy the model to the cloud. This included: (1) understanding the GCS environment and navigating the GUI, (2) understanding the functionality and interconnection between the different services, (3) creating a deployable repository that supports the Google Cloud Services and finally (4) successfully deploying the model, while adhering to continous integration best practices.
 
 ### Question 27
 
@@ -549,7 +560,7 @@ Deploying the model to the cloud was another challenge. This included: (1) under
 > *All members contributed to code by...*
 >
 > Answer:
-During our project we used Google Sheets to keep track of the project. This ensured that everybody knew what each group member was working on. Initial tasks such as environment setup were done in cooperation.
+During our project, we used Google Sheets to keep track of the project. This ensured that everybody knew what each group member was working on. Initial tasks such as environment setup were done in cooperation of all group members.
 
 Peter A. Gründer s214987:
 - Cookiecutter compliance
@@ -562,15 +573,19 @@ Peter A. Gründer s214987:
 - DVC
 
 Alex J. Hagedorn s215002:
-- Workflows and
-- Continuous integration
-- Continuous integration testing
+- Establishing and writing workflows 
 - Pre-commits
+- Continuous integration
+- Ensuring workflows worked correctly in Github
+
 
 Magnus Bengtsson s216169:
--
--
--
+- GitHub initializing
+- Making the scripts for downloading and preprocessing the data
+- Getting the src/models to work
+- WandB and logging initializing
+- Profiling and Sweeps
+- Code coverage and PEP8 compliance
 
 Student s224190:
 - Existing
