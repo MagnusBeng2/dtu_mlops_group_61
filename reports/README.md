@@ -159,27 +159,17 @@ Yes, in this project rules for quality and formatting was implemented using the 
 >
 > Answer:
 
-The total code coverage of code is 93%, which includes all our source code.
-| Name                           | STMTS | Miss | Cover | Missing                               |
-|--------------------------------|-------|------|-------|---------------------------------------|
-| ./src/\_\_init\_\_.py          | 0     | 0    | 100%  | -                                     |
-| ./src/models/\_\_init\_\_.py   | 2     | 0    | 100%  | -              	                |
-| ./src/models/model.py          | 70    | 2    | 97%   | 44, 46         		        |
-| ./src/models/predict\_model.py | 55    | 30   | 45%   | 22-31, 38-45, 52-55, 68-69, 79-94, 98 |
-| ./tests/models/train\_model.py | 86    | 16   | 81%   | 35-36, 49, 55-56, 154-164, 167        |
-| TOTAL                          | 213   | 48   | 77%   |                                       |
-
-The reason for the code coverage being just lower than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the __init__.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
+The reason for the code coverage being just lower than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the _init_.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
 The code coverage being 45% for predict_model.py is:
 1: the functionality for loading a checkpoint is not tested.
 2. parts of the code that utilize external data files is not tested
-3. the if __name__ == '__main__' is executed outside the pytest context
+3. the if _name_ == '_main_' is executed outside the pytest context
 4. Command-line arguments aren't tested
 5. Error handling, logging or sanity checks or not tested
 Thus, we focused more on testing the core logic of the model.
 
-The code coverage for train_model is
+The code coverage for train_model is merely 81% due to no testing of error handling and logging mechanisms. Instead, we focused on testing the core functionality of the argument parset, data loading and repoducibility.
 
 
 ### Question 9
@@ -355,10 +345,11 @@ https://github.com/MikkelGodsk/dtu_mlops_exam_project/blob/main/trainer.dockerfi
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-When locally executing code we used the build in debugger in visual studio code and when this was not enought we used simple print statements. The debugging mode in visual studio is in general quite informative and helpfull when erros occured. When for example building images in google cloud a lot of errors occured. Hence debugging needed to be performed locally before building in cloud.
+When we locally exectuted the code for testing, we typically used the --debug_mode in the input, meaning the datasize would be shrunk to 10% of the original size. When the code would outright produce errors when being run, we would debug either using Copilot or ChatGPT for error fixes and recommendations. Furthermore, we would typically also insert simple print statements, e.g., to check the size of tensors.
 
-We used the inbuild tool from pytorch lightning for profiling the training, but we did not really do anything to improve the code based on the profilling. However we are avare that the code might be edible for improvements. For example, we considered saving the tokenized dataset, which would probably speed up the training processes, such that the tokenization is not necessary every time the training function is called.
+When we got it to run locally, first then could we begin to export the functionality to Google Cloud.
+
+For profiling, we utilized the in-built tool from Pytorch Lightning to profile the training. However, we did not improve the coding based on the profiling, as we found it adequate in this project to just illustrate that profiling was possible. Nonetheless, the profiling did point us in directions on how to improve the code.
 
 ## Working in the cloud
 
@@ -418,12 +409,10 @@ In this project we did not utilize the Compute engine and used Vertex AI instead
 >
 > Answer:
 
-**SKAL SKRIVES OM(Peter)**
-The bucket can be seen in the following
-```markdown
+The bucket is depicted here:
 ![my_image](figures/cloud_bucket.png)
-```
-Here the bucket wmt19-de-en refers to the full dataset whereas 30k-dataset refers to the smaller dataset.
+Here, the bucket dtu_mlops_group_61 stores both the raw and the processed data, but this can also be done locally. In the raw folder, there is the original dataset, wmt19, and a reduced version, consisting of merely 50.000 samples.
+
 
 ### Question 20
 
@@ -539,9 +528,11 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
-Generally most of the group members did not have much experince in github when working with a group project. This offcourse took some time to get used to, but as the project went on good working habits was established.
+Generally, most of the group members did not have much experience in GitHub when working on a group project. This resulted in a mismatch of repository versions, which needed to be solved before moving on. Working with github, of course, took some time to get used to, but as the project went on, good working habits were established.
 
-When we started the project one of our first small struggles was to get the model to work locally...
+Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. Hereafter, we would also spend a lot of time getting the different python scripts inside of src/models running and making it fit to the processed data. And naturally, introducing things like logging and WandB to the scripts to ensure they are operable with the different services.
+
+**Peter skal skrive noget mere omrking struggles**
 
 **SKAL SKRIVES OM**
 Our first time consuming task was to download the data. This was downloaded from huggingface which took a long time. We also spent an excessive amount of time trying to train our model on cloud. Some main factors contributing to this issue, was our funding running short and having to authenticate multiple frameworks within a docker container. s194333 created the project on GCP, however she quickly (within 48 hours) ran short on funding (complementary of the course) due to operations ineracting with the *bucket* storing our data. We aren't entirely certain as to what depleted the grants, however this greatly restricted our work. From docker we needed to authenticate dvc, GCP, in addition to `wandb`. This proved tremendously cumbersome as the authentication requires certfication, which we would preferably avoid storing in the docker image. During this process we spent a lot of time debugging. Due to long building times errors didn't occur immediatly, which resulted in a lot of reapeated idle time.
