@@ -12,6 +12,7 @@ COPY src/ src/
 
 RUN pip install -r requirements.txt --no-cache-dir
 
+ENV PORT=8080
 EXPOSE 8080
 
-ENTRYPOINT ["python", "-u", "src/models/predict_model.py"]
+CMD ["uvicorn", "src.models.predict_model:app", "--host", "0.0.0.0", "--port", "8080"]
