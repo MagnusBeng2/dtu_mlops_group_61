@@ -406,8 +406,7 @@ The training was conducted in the Compute Engine using a Nvidia T5 GPU. The repo
 >
 > Answer:
 
-**SKAL SKRIVES OM(Peter)**
-In this project we did not utilize the Compute engine and used Vertex AI instead.
+During the project we made extensive use of the Compute Engine for training and infering our model, yielding promising results for translation. The setup was simple: the remote machine was initialized with the | "pytorch-latest-cpu" image and the Nvidia T5 GPU. Our repository was transferred and kept up-to-date using Git. Training and inference was completed for parts of the data set. Two difficulties were experienced during use: (1) At multiple occasion, the SSH connection was lost. This would regularly happen at the 1h mark, however, changing session timeout settings did not help resolve this issue. This issue could be resolved using tmux in future session. (2) We did not implement a process for exporting trained weights and biases. 
 
 ### Question 19
 
@@ -416,10 +415,9 @@ In this project we did not utilize the Compute engine and used Vertex AI instead
 >
 > Answer:
 
-The bucket is depicted here:
-![my_image](figures/cloud_bucket.png)
-Here, the bucket dtu_mlops_group_61 stores both the raw and the processed data, but this can also be done locally. In the raw folder, there is the original dataset, wmt19, and a reduced version, consisting of merely 50.000 samples.
+Our bucket consists of the complet WMT19 data set, as well as 200,000 preprocessed samples.
 
+![my_image](figures/ourbucket.png)
 
 ### Question 20
 
@@ -428,8 +426,9 @@ Here, the bucket dtu_mlops_group_61 stores both the raw and the processed data, 
 >
 > Answer:
 
-**SKAL SKRIVES OM(Peter)**
-![GCP Registry](figures/gcp_registry.png)
+The GCP Artefact Registry consists of the inference-image that was automatically created using the docker.dockerfile connected to our repository. We are not able to access the Artefact Registry at this point because the billing account associated with the project has run out of credits. I tried associating both (!) my credit cards to a new billing account to access the Artefact Registry but both were declined.
+
+![GCP Registry](figures/nope.png)
 
 
 ### Question 21
@@ -439,7 +438,6 @@ Here, the bucket dtu_mlops_group_61 stores both the raw and the processed data, 
 >
 > Answer:
 
-**SKAL SKRIVES OM(Peter)**
 ![Build history](figures/build_history_cloud.png)
 
 ### Question 22
@@ -456,15 +454,13 @@ Here, the bucket dtu_mlops_group_61 stores both the raw and the processed data, 
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-Deploying the model locally was quite straight forward. Inputs to the model can easily be given through the terminal. However deploying in google cloud caused a lot more complication. For deployment we wrapped our model into an application using FastAPI and used cloud run. We were heavily challenged by the fact that after training the model the checkpoint could not be saved to a bucket on cloud without authentication, which we did not manage to implement. Hence we did not use the finetuned model for deployment directly trough cloud.
-We did however manage to finetune the model on the hypatia cluster at DTU and uploading a checkpoint to bucket, however we had issues with downloading he checkpoint from within the python code (again due to authentication issues). Given a little more time, it would have been easy to setup DVC such that the model weights would be store alongside the dataset, whence we should have been able to get the finetuned model to deploy.
+We were able to deploy our model locally using a FastAPI and Uvicorn framwork. Inference worked with little delay compared to directly accessing the inference function. The framework for deploying the model in the cloud was to (1) define an inference model using an ONNX framwork, (2) creating an inference docker environment using the Artefact Registry, (3) use Google Cloud Run to create a scalable and efficient HTTP endpoint for serving requests.
 
-In the training file, we used distributed data loading and multiple workers implemented through pytorch-lightning.
+We skipped the definition of our inference step as an ONNX model and went directly to deploying the model in the cloud. The docker was successfully created and run both locally and in the cloud, however, the credits ran out before we could debug the HTTP endpoint in Google Run. 
 
-Link to our model:
-https://translation-gcp-app-jc4crsqeca-lz.a.run.app/translate/How are you doing?
+Locally, the API can be called with the following CURL statement or in a browser.
 
+curl -X GET "http://localhost:8080/translate/Hello%20world"
 
 ### Question 23
 
@@ -493,8 +489,7 @@ We did not manage to implement monitoring in this project. We would like to have
 >
 > Answer:
 
-**Peter udfyld de sidste**
-We had one group member whose credits we used troughout the project phase. S214497 used a total of ... euro ....
+We used $50,03, the complete credits from one group member. The credits ran out on the last day. Of the $50, $49,30	were used on the Compute Engine. The multiple failed attempts (due to disconnection) had a significant cost as time was spent reconnecting and redoing computations. 
 
 ## Overall discussion of project
 
@@ -515,9 +510,8 @@ We had one group member whose credits we used troughout the project phase. S2144
 >
 > Answer:
 
-**SKAL SKRIVES OM**
 ![Graphical reprsentation of architecture](figures/graphical_representation_of_architecture.png)
-The starting point of the diagram is our local pytorch application, which we wrapped in the **pytorch lightning** framework. This served as the inital steps of creating the mlops pipeline. We version-controled our project using **git** via **Github**. A new environment can be initialized using either **Conda** or **pip**. We opted to use `pipreqs` for finding the package requirements of our project, which made for seamless instantiation of the projects *requirements.txt*. We utilized `wandb` in conjunction with **pytorch lightning** for logging the 'experiments'/ training of our *NLP* model. For training configuration `wandb` performed satisfactory, hence `hydra` was omited from this project. These are the essential parts which are contained into a **docker** container. Locally the project follows the codestructure of **Cookiecutter**.
+The starting point of the diagram is our local Pytorch application, which we wrapped in the **Pytorch Lightning** framework. This served as the inital steps of creating the mlops pipeline. We version-controled our project using **git** and **Github**. A new environment can be initialized using either **Conda** or **pip**. We opted to use `pipreqs` for finding the package requirements of our project, which made for seamless instantiation of the projects *requirements.txt*. We utilized `wandb` in conjunction with **pytorch lightning** for logging the 'experiments'/ training of our *NLP* model. For training configuration `wandb` performed satisfactory, hence `hydra` was omited from this project. These are the essential parts which are contained into a **docker** container. Locally the project follows the codestructure of **Cookiecutter**.
 
 In order to utilize the **GPC** git and dvc both provides a link from the local machine. Git furthermore enabled **Github actions** for testing the code before uploading to a remote storage. Using a **trigger** connected to the github repository we created **docker images** in **docker containers** in the cloud.
 
@@ -535,16 +529,11 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
-Generally, most of the group members did not have much experience in GitHub when working on a group project. This resulted in a mismatch of repository versions, which needed to be solved before moving on. Working with github, of course, took some time to get used to, but as the project went on, good working habits were established.
+The project lifecycle was marked by many small mistakes (and learnings). Most of the group members had little experience in GitHub. This resulted for example in diverting version branches, which needed to be solved continually using git merge and git rebase. As the project scope grew, compliance with good practice project structure was neglected. The project in its current state has many features, but has little in common with the initial cookiecutter template. However, features are working and this problem could be resolved somewhat fast.  
 
-Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. Hereafter, we would also spend a lot of time getting the different python scripts inside of src/models running and making it fit to the processed data. And naturally, introducing things like logging and WandB to the scripts to ensure they are operable with the different services.
+Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. A significant amount of time was spent getting the different Python scripts inside of src/models running and making it fit to the processed data. As more features were introduced, such as logging and Wanddb, the experience was made that adding features often causes problems for others, highlighting the importance of best practice version control.
 
-**Peter skal skrive noget mere omrking struggles**
-
-**SKAL SKRIVES OM**
-Our first time consuming task was to download the data. This was downloaded from huggingface which took a long time. We also spent an excessive amount of time trying to train our model on cloud. Some main factors contributing to this issue, was our funding running short and having to authenticate multiple frameworks within a docker container. s194333 created the project on GCP, however she quickly (within 48 hours) ran short on funding (complementary of the course) due to operations ineracting with the *bucket* storing our data. We aren't entirely certain as to what depleted the grants, however this greatly restricted our work. From docker we needed to authenticate dvc, GCP, in addition to `wandb`. This proved tremendously cumbersome as the authentication requires certfication, which we would preferably avoid storing in the docker image. During this process we spent a lot of time debugging. Due to long building times errors didn't occur immediatly, which resulted in a lot of reapeated idle time.
-
-In general most of the tools and frameworks were relativly new for us, which resulted in a lot of google searches and unknown errors. The exercises significantly prepared us for conducting the project, however we still had a lot to learn when making the project. This challenged us in many ways, however we ultimately managed to overcome these.
+Deploying the model to the cloud was another challenge. This included: (1) understanding the GCS environment and navigating the GUI, (2) understanding the functionality and interconnection between the different services, (3) creating a deployable repository that supports the Google Cloud Services and finally (4) successfully deploying the model, while adhering to continous integration best practices.
 
 ### Question 27
 
@@ -560,14 +549,28 @@ In general most of the tools and frameworks were relativly new for us, which res
 > *All members contributed to code by...*
 >
 > Answer:
-During our project we used a google sheets to keep track of how far we were with each assignment. This made sure everybody knew what eachother was working on, and prevented unnescesarry work.
+During our project we used Google Sheets to keep track of the project. This ensured that everybody knew what each group member was working on. Initial tasks such as environment setup were done in cooperation.
 
-Everybody worked on setting up the project and filling out the package requirements. Moreover, part of out project was to ensure we were complying with good coding practices(pep8), and document important part of our code.
+Peter A. Gründer s214987:
+- Cookiecutter compliance
+- Docker files
+- Cloud deployment
+- Compute Engine training
+- API operation
+- Cloud inference
+- Pytest
+- DVC 
 
-Student s214987 was in charge of
+Alex J. Hagedorn s215002: 
+- Workflows and 
+- Continuous integration
+- Continuous integration testing
+- Pre-commits
 
-Student s215002 was in charge of workflows and continuous integration. This includes testing and and pre-commits to ensure a secure workflow.
+Magnus Bengtsson s216169:
+- 
+- 
+-
 
-Student s216169 was in charge of
-
-Student s224190 wa in charge of
+Student s224190:
+- Existing
