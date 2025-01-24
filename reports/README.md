@@ -408,7 +408,7 @@ Training framework where we run the docker image
 >
 > Answer:
 
-**SKAL SKRIVES OM**
+**SKAL SKRIVES OM(Peter)**
 In this project we did not utilize the Compute engine and used Vertex AI instead.
 
 ### Question 19
@@ -418,7 +418,7 @@ In this project we did not utilize the Compute engine and used Vertex AI instead
 >
 > Answer:
 
-**SKAL SKRIVES OM**
+**SKAL SKRIVES OM(Peter)**
 The bucket can be seen in the following
 ```markdown
 ![my_image](figures/cloud_bucket.png)
@@ -432,7 +432,7 @@ Here the bucket wmt19-de-en refers to the full dataset whereas 30k-dataset refer
 >
 > Answer:
 
-**SKAL SKRIVES OM**
+**SKAL SKRIVES OM(Peter)**
 ![GCP Registry](figures/gcp_registry.png)
 
 
@@ -443,7 +443,7 @@ Here the bucket wmt19-de-en refers to the full dataset whereas 30k-dataset refer
 >
 > Answer:
 
-**SKAL SKRIVES OM**
+**SKAL SKRIVES OM(Peter)**
 ![Build history](figures/build_history_cloud.png)
 
 ### Question 22
@@ -483,8 +483,7 @@ https://translation-gcp-app-jc4crsqeca-lz.a.run.app/translate/How are you doing?
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-We did not manage to implement monitoring. We would like to have monitoring implemented such that over time we could measure translation accuracy (based e.g on user rating) that would inform us about the performance and hence usefullness of our model. Provided we modelled the german and english language perfectly, our model would be quite prone to data-drifting. The only real issue would be words having new meanings or new words being adapted to the languages. However, this *perfect* modelling is rarely the case in real life as the dataset for a given translation task, will ultimately only be a subset of the distribution modelling the language. This means that our model will be context dependent. A weakness derived from this could e.g. be if the training dataset was exceedingly formal and we received an input which was very informal. As such, monitoring a user-based translation accuracy score could inform when our model becomes outdated.
+We did not manage to implement monitoring in this project. We would like to have implented cloud monitoring of our deployed model, so that we could measure the model performance and make sure it runs as expected over time. This tracking could include metrics like accuracy and precission, or f1 score to possibly detect model performance decrease. Moreover, because we have a translation model, and if it starts producing incorrect outputs more frequently, it could indicate data drifting which these models are higly susceptible to.
 
 ### Question 24
 
@@ -498,8 +497,8 @@ We did not manage to implement monitoring. We would like to have monitoring impl
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-s194333 did not use any credit for this project, since she managed to use all her credit on the project created for M21. In total on this project together we used around 5 dollars. Google cloud was not very transparent about billing account or money usage.
+**Peter udfyld de sidste**
+We had one group member whose credits we used troughout the project phase. S214497 used a total of ... euro ....
 
 ## Overall discussion of project
 
@@ -540,6 +539,10 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
+Generally most of the group members did not have much experince in github when working with a group project. This offcourse took some time to get used to, but as the project went on good working habits was established.
+
+When we started the project one of our first small struggles was to get the model to work locally...
+
 **SKAL SKRIVES OM**
 Our first time consuming task was to download the data. This was downloaded from huggingface which took a long time. We also spent an excessive amount of time trying to train our model on cloud. Some main factors contributing to this issue, was our funding running short and having to authenticate multiple frameworks within a docker container. s194333 created the project on GCP, however she quickly (within 48 hours) ran short on funding (complementary of the course) due to operations ineracting with the *bucket* storing our data. We aren't entirely certain as to what depleted the grants, however this greatly restricted our work. From docker we needed to authenticate dvc, GCP, in addition to `wandb`. This proved tremendously cumbersome as the authentication requires certfication, which we would preferably avoid storing in the docker image. During this process we spent a lot of time debugging. Due to long building times errors didn't occur immediatly, which resulted in a lot of reapeated idle time.
 
@@ -559,16 +562,14 @@ In general most of the tools and frameworks were relativly new for us, which res
 > *All members contributed to code by...*
 >
 > Answer:
+During our project we used a google sheets to keep track of how far we were with each assignment. This made sure everybody knew what eachother was working on, and prevented unnescesarry work.
 
+Everybody worked on setting up the project and filling out the package requirements. Moreover, part of out project was to ensure we were complying with good coding practices(pep8), and document important part of our code.
 
+Student s214987 was in charge of
 
-**SKAL SKRIVES OM**
-Student s184399 created github repository with the cookiecutter structure. Furthermore the student was in charge of testing the models using unittesting and other previously mentioned tests. Furthermore he also contributed to building the docker images in the cloud and deploying the model.
+Student s215002 was in charge of workflows and continuous integration. This includes testing and and pre-commits to ensure a secure workflow.
 
-Student s185231 was in charge of building the docker images in the cloud. Furthermore the student helped downloading the data and creating the scripts for training and testing the model.
+Student s216169 was in charge of
 
-Student s183319 heavily contributed to the report and was in charge of managing the dependencies and set up of version control as well as a lot of debugging.
-
-Student 194333 was responsible for creating the scripts for training and prediction as well as afterwards training the model. Furthermore the student analysed the results and performed a sweep in W&B.
-
-Student s194245 was in charge of handeling the data -all the way from downloading to utilizing. Furthermore the student was in charge of utilizing google cloud for training.
+Student s224190 wa in charge of
