@@ -406,7 +406,7 @@ The training was conducted in the Compute Engine using a Nvidia T5 GPU. The repo
 >
 > Answer:
 
-During the project we made extensive use of the Compute Engine for training and infering our model, yielding promising results for translation. The setup was simple: the remote machine was initialized with the | "pytorch-latest-cpu" image and the Nvidia T5 GPU. Our repository was transferred and kept up-to-date using Git. Training and inference was completed for parts of the data set. Two difficulties were experienced during use: (1) At multiple occasion, the SSH connection was lost. This would regularly happen at the 1h mark, however, changing session timeout settings did not help resolve this issue. This issue could be resolved using tmux in future session. (2) We did not implement a process for exporting trained weights and biases. 
+During the project we made extensive use of the Compute Engine for training and infering our model, yielding promising results for translation. The setup was simple: the remote machine was initialized with the | "pytorch-latest-cpu" image and the Nvidia T5 GPU. Our repository was transferred and kept up-to-date using Git. Training and inference was completed for parts of the data set. Two difficulties were experienced during use: (1) At multiple occasion, the SSH connection was lost. This would regularly happen at the 1h mark, however, changing session timeout settings did not help resolve this issue. This issue could be resolved using tmux in future session. (2) We did not implement a process for exporting trained weights and biases.
 
 ### Question 19
 
@@ -456,7 +456,7 @@ The GCP Artefact Registry consists of the inference-image that was automatically
 
 We were able to deploy our model locally using a FastAPI and Uvicorn framwork. Inference worked with little delay compared to directly accessing the inference function. The framework for deploying the model in the cloud was to (1) define an inference model using an ONNX framwork, (2) creating an inference docker environment using the Artefact Registry, (3) use Google Cloud Run to create a scalable and efficient HTTP endpoint for serving requests.
 
-We skipped the definition of our inference step as an ONNX model and went directly to deploying the model in the cloud. The docker was successfully created and run both locally and in the cloud, however, the credits ran out before we could debug the HTTP endpoint in Google Run. 
+We skipped the definition of our inference step as an ONNX model and went directly to deploying the model in the cloud. The docker was successfully created and run both locally and in the cloud, however, the credits ran out before we could debug the HTTP endpoint in Google Run.
 
 Locally, the API can be called with the following CURL statement or in a browser.
 
@@ -489,7 +489,7 @@ We did not manage to implement monitoring in this project. We would like to have
 >
 > Answer:
 
-We used $50,03, the complete credits from one group member. The credits ran out on the last day. Of the $50, $49,30	were used on the Compute Engine. The multiple failed attempts (due to disconnection) had a significant cost as time was spent reconnecting and redoing computations. 
+We used $50,03, the complete credits from one group member. The credits ran out on the last day. Of the $50, $49,30	were used on the Compute Engine. The multiple failed attempts (due to disconnection) had a significant cost as time was spent reconnecting and redoing computations.
 
 ## Overall discussion of project
 
@@ -529,7 +529,7 @@ When training a dataset stored in a **GCP bucket** was utilized. Information sha
 >
 > Answer:
 
-The project lifecycle was marked by many small mistakes (and learnings). Most of the group members had little experience in GitHub. This resulted for example in diverting version branches, which needed to be solved continually using git merge and git rebase. As the project scope grew, compliance with good practice project structure was neglected. The project in its current state has many features, but has little in common with the initial cookiecutter template. However, features are working and this problem could be resolved somewhat fast.  
+The project lifecycle was marked by many small mistakes (and learnings). Most of the group members had little experience in GitHub. This resulted for example in diverting version branches, which needed to be solved continually using git merge and git rebase. As the project scope grew, compliance with good practice project structure was neglected. The project in its current state has many features, but has little in common with the initial cookiecutter template. However, features are working and this problem could be resolved somewhat fast.
 
 Initially, a lot of time was used on finding and understanding the nature of the data and how it was going to be processed. A significant amount of time was spent getting the different Python scripts inside of src/models running and making it fit to the processed data. As more features were introduced, such as logging and Wanddb, the experience was made that adding features often causes problems for others, highlighting the importance of best practice version control.
 
@@ -559,17 +559,17 @@ Peter A. Gründer s214987:
 - API operation
 - Cloud inference
 - Pytest
-- DVC 
+- DVC
 
-Alex J. Hagedorn s215002: 
-- Workflows and 
+Alex J. Hagedorn s215002:
+- Workflows and
 - Continuous integration
 - Continuous integration testing
 - Pre-commits
 
 Magnus Bengtsson s216169:
-- 
-- 
+-
+-
 -
 
 Student s224190:
