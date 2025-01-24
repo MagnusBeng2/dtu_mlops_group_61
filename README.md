@@ -30,56 +30,66 @@ Project Organization
 ├── LICENSE
 ├── Makefile
 ├── README.md
+├── __pycache__
+│   └── test_environment.cpython-312-pytest-8.3.4.pyc
 ├── bak.setup.py
 ├── cloudbuild.yaml
 ├── configs
-│   └── tox.ini
+│   └── tox.ini
 ├── data
-│   ├── processed
-│   └── raw
+│   ├── processed
+│   └── raw
 ├── data.dvc
 ├── docker.dockerfile
 ├── dockerfiles
-│   ├── predict gpu.dockerfile
-│   ├── predict.dockerfile
-│   ├── trainer gpu.dockerfile
-│   └── trainer.dockerfile
+│   ├── predict gpu.dockerfile
+│   ├── predict.dockerfile
+│   ├── trainer gpu.dockerfile
+│   └── trainer.dockerfile
 ├── docs
-│   ├── Makefile
-│   ├── commands.rst
-│   ├── conf.py
-│   ├── getting-started.rst
-│   ├── index.rst
-│   └── make.bat
+│   ├── Makefile
+│   ├── commands.rst
+│   ├── conf.py
+│   ├── getting-started.rst
+│   ├── index.rst
+│   └── make.bat
 ├── environment.yml
 ├── lightning_logs
-│   ├── version_0
-│   ├── version_1
-│   ├── version_2
-│   └── version_3
+│   ├── version_0
+│   ├── version_1
+│   ├── version_2
+│   ├── version_3
+│   ├── version_4
+│   ├── version_5
+│   ├── version_6
+│   ├── version_7
+│   ├── version_8
+│   └── version_9
 ├── models
-│   └── models--t5-small
+│   └── models--t5-small
 ├── profiling
-│   └── profile.prof
+│   └── profile.prof
 ├── pyproject.toml
+├── report.html
 ├── reports
-│   ├── README.md
-│   ├── figures
-│   ├── report.html
-│   └── report.py
+│   ├── README.md
+│   ├── figures
+│   ├── report.html
+│   └── report.py
 ├── requirements.txt
 ├── src
-│   ├── _init_.py
-│   ├── _pycache_
-│   ├── data
-│   └── models
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── data
+│   └── models
 ├── test_environment.py
 ├── tests
-│   ├── _init_.py
-│   ├── test_api.py
-│   ├── test_dataset.py
-│   ├── test_model.py
-│   └── test_train.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── test_api.py
+│   ├── test_dataset.py
+│   ├── test_model.py
+│   └── test_train.py
 ├── tree_structure.txt
 └── wandb
     ├── debug-internal.log -> run-20250124_121336-lq1ocjfa/logs/debug-internal.log
@@ -91,5 +101,5 @@ Project Organization
     ├── run-20250124_104750-i9jh5y1k
     └── run-20250124_121336-lq1ocjfa
 
-29 directories, 36 files
+37 directories, 38 files
 --------
