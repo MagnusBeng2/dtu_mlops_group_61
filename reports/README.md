@@ -69,7 +69,7 @@ be installed with `pip install click markdown`.
 >s
 > Answer:
 
-In this project, we made use of the [Transformers](https://github.com/huggingface/transformers) library developed by the Huggingface team. This library includes the [t5-small model](https://huggingface.co/t5-small), a natural language processing (NLP) model designed for tasks like translating text between languages. For this project, we employed the Trainer class from the PyTorch Lightning framework to train and evaluate the t5-small model using a subset of the English/German (en-de) [WMT19 dataset](https://huggingface.co/datasets/wmt19), which originates from the Fourth Conference on Machine Translation. Additionally, we used Weights and Biases (`wandb`) to manage the configuration file containing the model's hyperparameters and to log the training and validation losses. Utilizing the obtained model and its parameters given for the best run, we were able to translate an input of English text to German.
+In this project, we made use of the [Transformers](https://github.com/huggingface/transformers) library developed by Huggingface. This library includes the [t5-small model](https://huggingface.co/t5-small), a natural language processing (NLP) model designed for tasks like translating text. For this project, we employed the Trainer class from the PyTorch Lightning framework to finetune and evaluate the t5-small model using a subset of the English/German (en-de) [WMT19 dataset](https://huggingface.co/datasets/wmt19), which originates from the Fourth Conference on Machine Translation. Additionally, we used Weights and Biases (`wandb`) to manage the configuration file containing the model's hyperparameters and to log the training and validation losses. Utilizing the obtained model and its parameters given for the best run, we were able to translate an input of English text to German.
 
 
 ## Coding environment
@@ -89,9 +89,9 @@ In this project, we made use of the [Transformers](https://github.com/huggingfac
 >
 > Answer:
 
-Initially, we established a new conda environment, called 'dtu_mlops_group_61', running Python 3.11. This would ensure that all users would be running on the same environment-type.
+Initially, we established a new conda environment, called 'dtu_mlops_group_61', running Python 3.12. This would ensure that all developers would be running on the same environment-type.
 
-In the project, we used a requirements.txt file to keep track of the necessary python packages to run the project code. Some of python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created and filled in as the project progressed.
+In the project, we used a requirements.txt as well as the pyproject.toml file to keep track of the necessary Python packages and environment to run the project code. Some Python packages in requirements.txt require a specific version to be downloaded, as to prevent certain incompatibilities. The requirements.txt was created using pipreqs and updated regularly manually as the project progressed.vb
 
 
 To get a complete copy of our development enviroment, one would have to run the following commands (assuming they have git installed):
@@ -130,7 +130,7 @@ We also included the tests/ folder which holds scripts for conducting different 
 >
 > Answer:
 
-Yes, in this project rules for quality and formatting was implemented using the ruff linter in our continuous integration. The ruff linter ensures compliance with PEP 8 standards, together with pre-commit hooks which automatically check and fix issues in the staged files before pushing. This includes trailing  whitespaces, missing newlines at the end of files and improperly sorted imports.
+Yes, in this project rules for quality and formatting were implemented using the Ruff linter in our continuous integration. This ensures compliance with PEP 8 standards, together with pre-commit hooks that automatically check and fix issues in the staged files before pushing. This includes trailing, whitespaces, missing newlines at the end of files and improperly sorted imports.
 
 
 ## Version control
@@ -144,7 +144,21 @@ Yes, in this project rules for quality and formatting was implemented using the 
 >
 > Answer:
 
-5
+We implemented 11 tests that were run successfully: 
+
+<ul>
+  <li>def test_api_request_valid(mock_model):</li>
+  <li>def test_dataset_format():</li>
+  <li>def test_model_is_torch():</li>
+  <li>def test_model_output():</li>
+  <li>def test_steps():</li>
+  <li>def test_training_loop():</li>
+  <li>def test_train_model_arguments():</li>
+  <li>def test_train_model_steps(mock_trainer, mock_model, mock_load_from_disk, mock_wandb):</li>
+  <li>def test_set_seed():</li>
+  <li>def test_get_next_version():</li>
+  <li>def test_training_loop(mock_trainer, mock_load_from_disk, mock_wandb):</li>
+</ul>
 
 ### Question 8
 
@@ -159,18 +173,17 @@ Yes, in this project rules for quality and formatting was implemented using the 
 >
 > Answer:
 
-The reason for the code coverage being just lower than 100% in the file model.py is that lines 44 and 46 are related to edge-case checks in the _init_.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
+The code coverage is just below 100% for the model.py script. Lines 44 and 46 are related to edge-case checks in the _init_.py. These checks handle invalid configurations (e.g., missing or invalid parameters) that are not triggered in the current test setup, as we assumed valid configurations were always to be provided.
 
-The code coverage being 45% for predict_model.py is:
-1: the functionality for loading a checkpoint is not tested.
-2. parts of the code that utilize external data files is not tested
-3. the if _name_ == '_main_' is executed outside the pytest context
-4. Command-line arguments aren't tested
-5. Error handling, logging or sanity checks or not tested
-Thus, we focused more on testing the core logic of the model.
+The code coverage is 45% for predict_model.py. Test focus on testing the core logic of the model. Following elements of the script are not tested:
 
-The code coverage for train_model is merely 81% due to no testing of error handling and logging mechanisms. Instead, we focused on testing the core functionality of the argument parset, data loading and repoducibility.
+1. The functionality for loading a checkpoint is not tested.
+2. Parts of the code that utilize external data files is not tested.
+3. The if _name_ == '_main_' is executed outside the pytest context.
+4. Command-line arguments aren't tested.
+5. Error handling, logging or sanity checks or not tested.
 
+The code coverage for train_model is 81%. Error handling and logging mechanisms were not tested on. Instead, the focused lay testing the core functionality of the argument parser, data loading and repoducibility.
 
 ### Question 9
 
@@ -185,11 +198,11 @@ The code coverage for train_model is merely 81% due to no testing of error handl
 >
 > Answer:
 
-We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated rarely, but only with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling.
+We utilized two major branches in this project, main, which we used as the developer branch, and the safe branch, which we updated with working versions of the repository. This ensured that we kept the number of branches to a minimum, while still having flexibility and allowing for better error-handling.
 
-Now, we did not for this protect have branch protection rules. In retrospect, it would probably be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests wouldn't simply override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided upon refraining from using them. All group members made the pledge to ensure to pull new updates before pushing, always ensuring up-to-date repository and no merge conflicts.
+For this project, we did not implement branch protection rules. In retrospect, it would be most advantageous to establish rules inside the GitHub repository, making sure that push and merge requests do not override the wrong files. However, we believed it would add additional complexity to project and since we were only 4 group members, we decided not using them. All group members made the pledge to ensure to pull new updates before pushing, ensuring an up-to-date local repository and no merge conflicts.
 
-That being said, it is definitely the practice to construct branch protection rules in one's repository, especially when being many developers work on it. For the future, it would be the best option to include branch protection rules for our future repositories.
+That being said, it is definitely best practice to construct branch protection rules in one's repository, especially when many developers work on it. For future projects, it would be best to include branch protection rules early on.
 
 ### Question 10
 
@@ -204,9 +217,7 @@ That being said, it is definitely the practice to construct branch protection ru
 >
 > Answer:
 
-
-SKAL SKRIVES OM, IKKE VORES TEKST
-The wmt19 dataset originally contained around 9GB of data. Hence we decided to create a subset of the dataset. Data version control hereby contributed to an easy update of the data. We initially created a bucket in Google Cloud and used dvc to manage this. However s194333 did not have enough credit to sustain this service hence we had to create another bucket containing the same data with a different billing account. However we also stored the data on google drive, in case we potentially would use all credits on cloud again. Hence the dvc package proved to be very usefull for switching between different data storage options. In addition, dvc was an easy update to implement on all our devices since it only required some simple terminal commands.
+DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our data was static, the primary reason for using DVC was to pull preprocessed data files to local and remote machines for faster repository deployment. Throughout the project lifecycle we used a couple of different version of our data files, consisting of different amounts of preprocessed data. The latest version contains the complete preprocessed WMD19 dataset for finetuning on the GPU assisted Cloud Compute environment.  
 
 ### Question 11
 
@@ -222,11 +233,10 @@ The wmt19 dataset originally contained around 9GB of data. Hence we decided to c
 >
 > Answer:
 
-In this project we have implemented a continuous integration setup using the actions function in github. This includes unit testing and linting, for more than one operating system. To be more specific, the tests are run on python 3.12, and all 3 operating systems linux(ubuntu), macos, and windows. Unit testing is done using pytest, ... . For linting, Ruff is used as mentioned before replacing both flake8 and isort, adhering to python standards PEP8 and handling import, sorting and replacing. In the future mypy could be added as a way to perform static type checking.
+We have implemented a continuous integration setup using the Actions Function in Github. This includes unit testing and linting, for more than one operating system. Specificly, the tests are run on Python 3.12, and 3 operating systems Linux (Ubuntu), MacOS, and Windows. Unit testing is done using Pytest. For linting, Ruff is used as mentioned before replacing both Flake8 and iSort, adhering to Python standards PEP8 and handling import, sorting and replacing. In the future MyPy could be added as a way to perform static type checking.
 
-Here is a link to the github actions:
+Here is a link to the Github actions:
 https://github.com/MagnusBeng2/dtu_mlops_group_61/actions
-
 
 ## Running code and tracking experiments
 
@@ -245,10 +255,9 @@ https://github.com/MagnusBeng2/dtu_mlops_group_61/actions
 >
 > Answer:
 
-For training the model, the chosen hyperparameters are by default taken from the python script's argparser. We found this to be easier than taking from a config file. However, we still inserted one under /src/models/config to show that it was also an option.
+For training the model, the chosen hyperparameters are by default taken from the Python script's Argparser. We found this to be easier than taking from a config file. A config file can be found under /src/models/config.
 
-In the script, we set the default values in the argparsers, which could be simply overwritten when running the CLI command, like:
-'python ./src/models/train_model.py' --epochs 10 --lr 0.01', signifying that this run should run with 10 epochs and a learning rate og 0.01. The argsparser passes either the default or selected values to the wandb.init() function, whereafter the hyperparameters are loaded into the training script as follows:
+In the script, we set the default values in the argparsers, which can be overwritten when running the command: 'python ./src/models/train_model.py' --epochs 10 --lr 0.01', which configures the script to run with 10 epochs and a learning rate of 0.01. The argsparser passes either the default or selected values to the wandb.init() function, whereafter the hyperparameters are loaded into the training script as follows:
 
 config = wandb.config
     lr = config.lr
@@ -256,11 +265,11 @@ config = wandb.config
     batch_size = config.batch_size
     seed = config.seed
 
-Moreover, we utilized the sweep functionality of WandB in sweep_model.py as to optimize hyperparameters, wherethrough the hyperparameter configuration was logged.
+Moreover, we utilized the Sweep functionality of WandB in sweep_model.py as to optimize hyperparameters, wherethrough the hyperparameter configuration was logged.
 
 As for evaluate_model.py, it also utilized the argparsing functionality, taking the inputs 'seed', 'batch_size' and 'checkpoint_dir' for evaluation.
 
-And for predict_model.py, it took an input and if the API was to be used, ultimately, translating the input into a text in German.
+And for predict_model.py, it took an input and if the API was to be used, translating the input into a text in German.
 
 ### Question 13
 
@@ -303,7 +312,7 @@ We see a small descrease of the loss. This metric is essential for showing wheth
 
 We also track the validation loss as seen on the figure below.
 
-![Validation loss](figures/val_loss.png)
+![Validation loss](figures/v al_loss.png)
 
 The validation loss is very important to monitor the models performance when presented to unknown data.
 
@@ -326,10 +335,10 @@ This did however show us that with the best hyperparameterse the validation loss
 >
 > Answer:
 
-**SKAL SKRIVES OM**
-In our project, reproducablity is very important, hence we utilize Docker in order to ensure that the application can be run on all devices. Hence we created docker images for training and deploying the model. Since building docker images are a time consuming task, we prefred google cloud for building the dockerimages in cloud using a dockerfile and triggers. After being build the docker images are run using google cloud Run.
-A link to the training docker file is provided in the following:
-https://github.com/MikkelGodsk/dtu_mlops_exam_project/blob/main/trainer.dockerfile
+For most practical tests, containerized applications were not used. For deploying our model in the Cloud for inference, however, a docker was created with a minimalist setup including necessary packages for the predict_model.py script. The dockerfile used for this setup is called docker.dockerfile in our repository. To build and run the dockerfile locally the following commands can be used:
+
+docker build . -f docker.dockerfile -t inference:latest
+docker run -p 8080:8080 inference:latest
 
 
 ### Question 16
@@ -345,7 +354,7 @@ https://github.com/MikkelGodsk/dtu_mlops_exam_project/blob/main/trainer.dockerfi
 >
 > Answer:
 
-When we locally exectuted the code for testing, we typically used the --debug_mode in the input, meaning the datasize would be shrunk to 10% of the original size. When the code would outright produce errors when being run, we would debug either using Copilot or ChatGPT for error fixes and recommendations. Furthermore, we would typically also insert simple print statements, e.g., to check the size of tensors.
+When we executed the code locally for testing, we typically used the --debug_mode as command option, meaning the datasize would be shrunk to 10% of the original size. When the code would produce errors when being run, we would debug either using Copilot or ChatGPT for error fixes and recommendations. Furthermore, we would typically also insert simple print statements, e.g., to check the size of tensors.
 
 When we got it to run locally, first then could we begin to export the functionality to Google Cloud.
 
@@ -366,24 +375,22 @@ For profiling, we utilized the in-built tool from Pytorch Lightning to profile t
 >
 > Answer:
 
-**SKAL SKRIVES OM**
+The following GCS were used:
+
 Buckets:
-We used GCP buckets for initally storing the data. However we quickly ran out of credits and hence had to create a new bucket containg the same data but with a different billing account. Furthermore we also used buckets for storring checkpoints.
+GCS Buckets were used to store the WMT19 dataset for training. The data inside the bucket was connected and version controlled by DVC.
 
-Build:
-Images are build using cloud build.
+Cloud Build:
+The Image build by the dockerfile for inference using Cloud Run, was created using Cloud Build.  
 
-Triggers:
-In order to automatically build images triggers are used to connect the github repository to google cloud
+Cloud Build (Triggers):
+A trigger was setup to automatically build a new image when changes to the repository were pushed. For minimizing usage in the future, the trigger should be modified to only update when the dockerfile is updated, not unrelated files. 
 
-Containers:
-Images are stored in containers
+Cloud Run:
+For deploying inference for our model, Cloud Run is used as an easy, scalable solution. The Image created by Cloud Build in unison with FastAPI would be used to create a HTTP Endpoint. 
 
-Run:
-Models are deployed using google Run
-
-Vertex AI:
-Training framework where we run the docker image
+Compute Engine:
+The training was conducted in the Compute Engine using a Nvidia T5 GPU. The repository was cloned to the remote machine, with DVC providing the data set.
 
 
 ### Question 18
