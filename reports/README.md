@@ -116,9 +116,7 @@ pip install -e .
 > *experiments.*
 > Answer:
 
-SKAL SKRIVES OM, IKKE VORES TEKST
-The overall structure is initialized with the cookiecutter template. In general we tried to follow the cookiecutter structure as much as possible. Since the original WMT19 dataset took up too much memory in both cloud and drive, we processed the data locally and only included a subset in the proccessed folder in the data folder. Thus we deleted the data/external/, data/interim/ and data/raw/ folders. We also deleted the folders notebooks/, references/, src/features/, src/visualization/, since we did not use these. We filled out the src/data/ folder and the src/models/ folder in which we also included a file src/models/evaluate_model.py for evaluating the model and a folder src/models/config/, with the configuration files.
-We also included the tests/ folder which holds scripts for conducting different pytests.
+The initial repository was very similiar to the MLops cookiecutter template and most template folders were included. Only small adjustements were made along the way. Throughout the report lifecycle we tried adhering to the structure, however, as features were added, the structure became more blurred. Some examples are that the src folder was not used as intended, the models folder remained empty, the folder lightning_logs was added, as well as multiple config files to the root. Features were usually not configered to work with the template, which resulted in many logs and config files to be stored in the root. All in all the structure needs to be reworked.
 
 
 ### Question 6
