@@ -144,7 +144,7 @@ Yes, in this project rules for quality and formatting were implemented using the
 >
 > Answer:
 
-We implemented 11 tests that were run successfully: 
+We implemented 11 tests that were run successfully:
 
 <ul>
   <li>def test_api_request_valid(mock_model):</li>
@@ -217,7 +217,7 @@ That being said, it is definitely best practice to construct branch protection r
 >
 > Answer:
 
-DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our data was static, the primary reason for using DVC was to pull preprocessed data files to local and remote machines for faster repository deployment. Throughout the project lifecycle we used a couple of different version of our data files, consisting of different amounts of preprocessed data. The latest version contains the complete preprocessed WMD19 dataset for finetuning on the GPU assisted Cloud Compute environment.  
+DVC was implemented, using a Google Cloud Service (GCS) bucket storage. As our data was static, the primary reason for using DVC was to pull preprocessed data files to local and remote machines for faster repository deployment. Throughout the project lifecycle we used a couple of different version of our data files, consisting of different amounts of preprocessed data. The latest version contains the complete preprocessed WMD19 dataset for finetuning on the GPU assisted Cloud Compute environment.
 
 ### Question 11
 
@@ -381,13 +381,13 @@ Buckets:
 GCS Buckets were used to store the WMT19 dataset for training. The data inside the bucket was connected and version controlled by DVC.
 
 Cloud Build:
-The Image build by the dockerfile for inference using Cloud Run, was created using Cloud Build.  
+The Image build by the dockerfile for inference using Cloud Run, was created using Cloud Build.
 
 Cloud Build (Triggers):
-A trigger was setup to automatically build a new image when changes to the repository were pushed. For minimizing usage in the future, the trigger should be modified to only update when the dockerfile is updated, not unrelated files. 
+A trigger was setup to automatically build a new image when changes to the repository were pushed. For minimizing usage in the future, the trigger should be modified to only update when the dockerfile is updated, not unrelated files.
 
 Cloud Run:
-For deploying inference for our model, Cloud Run is used as an easy, scalable solution. The Image created by Cloud Build in unison with FastAPI would be used to create a HTTP Endpoint. 
+For deploying inference for our model, Cloud Run is used as an easy, scalable solution. The Image created by Cloud Build in unison with FastAPI would be used to create a HTTP Endpoint.
 
 Compute Engine:
 The training was conducted in the Compute Engine using a Nvidia T5 GPU. The repository was cloned to the remote machine, with DVC providing the data set.
